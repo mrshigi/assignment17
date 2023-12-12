@@ -85,35 +85,6 @@ if (result.error) {
     res.status(400).send(result.error.details[0].message);
     return;
 }
-app.put("/api/books/edit", upload.single("img"), (req, res) => {
-    const { id } = req.body;
-    let bookFound = false;
-    
-    books = books.map(book => {
-        if (book._id == id) {
-            bookFound = true;
-            return {
-                ...book,
-                name: req.body.name,
-                description: req.body.description,
-                // Update other fields as necessary
-            };
-        }
-        return book;
-    });
-
-    if (bookFound) {
-        res.send(books);
-    } else {
-        res.status(404).send("Book not found");
-    }
-});
-// DELETE endpoint for deleting a book
-app.delete("/api/books/:id", (req, res) => {
-    const { id } = req.params;
-    books = books.filter(book => book._id != id);
-    res.send(books);
-});
 
 const book = {
     _id: books.length + 1,
@@ -136,7 +107,6 @@ const schema = Joi.object({
 
 return schema.validate(book);
 };
-
 
 app.listen(3000, () => {
 console.log("666 satan mf");

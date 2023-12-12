@@ -5,38 +5,6 @@ const getBooks = async() => {
         console.log(error);
     }
 };
-const addEditBook = async (e) => {
-    e.preventDefault();
-    const form = document.getElementById("add-edit-book-form");
-    const formData = new FormData(form);
-
-    if (form._id.value) { // Edit book
-        await fetch(`/api/books/${form._id.value}`, {
-            method: "PUT",
-            body: formData
-        });
-    } else { // Add new book
-        await fetch("/api/books", {
-            method: "POST",
-            body: formData
-        });
-    }
-
-    resetForm();
-    document.querySelector(".dialog").classList.add("transparent");
-    showBooks();
-};
-
-// Function to show a confirmation prompt before deletion
-const confirmDelete = async (bookId) => {
-    if (confirm("Are you sure you want to delete this book?")) {
-        await fetch(`/api/books/${bookId}`, {
-            method: "DELETE"
-        });
-        showBooks();
-    }
-};
-
 
 const showBooks = async() => {
     let books = await getBooks();
@@ -59,18 +27,12 @@ const showBooks = async() => {
         h3.innerHTML = book.name;
         a.append(h3);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.textContent = "Delete";
-        deleteButton.onclick = () => confirmDelete(book._id);
-        section.appendChild(deleteButton);
-
         a.onclick = (e) => {
             e.preventDefault();
             displayDetails(book);
         };
     });
 };
-
 
 const displayDetails = (book) => {
     const bookDetails = document.getElementById("book-details");
@@ -102,10 +64,6 @@ const displayDetails = (book) => {
         ul.append(li);
         li.innerHTML = summary;
     });
-    const deleteButton = document.createElement("button");
-    deleteButton.innerText = "Delete";
-    deleteButton.onclick = () => confirmDelete(book._id);
-    bookDetails.append(deleteButton);
 
     eLink.onclick = (e) => {
         e.preventDefault();
@@ -119,11 +77,37 @@ const displayDetails = (book) => {
 
     populateEditForm(book);
 };
-const populateEditForm = (book) => {
-    document.getElementById("name").value = book.name;
-    document.getElementById("description").value = book.description;
-    // Populate other fields as necessary
-    document.getElementById("book-id").value = book._id;
+
+const populateEditForm = (book) => {};
+
+const addEditBook = async(e) => {
+    e.preventDefault();
+    const form = document.getElementById("add-edit-book-form");
+    const formData = new FormData(form);
+    let response;
+    //trying to add a new "book lol tuff"
+    if (form._id.value == -1) {
+        formData.delete("_id");
+        formData.delete("img");
+        formData.append("summaries", getSummaries());
+
+        console.log(...formData);
+
+        response = await fetch("/api/books", {
+            method: "POST",
+            body: formData
+        });
+    }
+
+    //successfully got data from server
+    if (response.status != 200) {
+        console.log("Error posting data");
+    }
+
+    response = await response.json();
+    resetForm();
+    document.querySelector(".dialog").classList.add("transparent");
+    showBooks();
 };
 
 const getSummaries = () => {
