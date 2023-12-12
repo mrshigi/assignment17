@@ -1,10 +1,42 @@
 const getBooks = async() => {
     try {
-        return (await fetch("http://localhost:3000/api/books")).json();
+        return (await fetch("https://a16.onrender.com/api/books")).json();
     } catch (error) {
         console.log(error);
     }
 };
+const addEditBook = async (e) => {
+    e.preventDefault();
+    const form = document.getElementById("add-edit-book-form");
+    const formData = new FormData(form);
+
+    if (form._id.value) { // Edit book
+        await fetch(`/api/books/${form._id.value}`, {
+            method: "PUT",
+            body: formData
+        });
+    } else { // Add new book
+        await fetch("/api/books", {
+            method: "POST",
+            body: formData
+        });
+    }
+
+    resetForm();
+    document.querySelector(".dialog").classList.add("transparent");
+    showBooks();
+};
+
+// Function to show a confirmation prompt before deletion
+const confirmDelete = async (bookId) => {
+    if (confirm("Are you sure you want to delete this book?")) {
+        await fetch(`/api/books/${bookId}`, {
+            method: "DELETE"
+        });
+        showBooks();
+    }
+};
+
 
 const showBooks = async() => {
     let books = await getBooks();
@@ -17,7 +49,7 @@ const showBooks = async() => {
 
         let img = document.createElement("img");
         section.append(img);
-        img.src="http://localhost:3000/" + book.img;
+        img.src="https://a16.onrender.com/" + book.img;
 
         const a = document.createElement("a");
         a.href = "#";
@@ -27,18 +59,18 @@ const showBooks = async() => {
         h3.innerHTML = book.name;
         a.append(h3);
 
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.onclick = () => confirmDelete(book._id);
+        section.appendChild(deleteButton);
+
         a.onclick = (e) => {
             e.preventDefault();
             displayDetails(book);
         };
     });
 };
-const populateEditForm = (book) => {
-    document.getElementById("name").value = book.name;
-    document.getElementById("description").value = book.description;
-    // Populate other fields as necessary
-    document.getElementById("add-edit-book-form")._id.value = book._id;
-};
+
 
 const displayDetails = (book) => {
     const bookDetails = document.getElementById("book-details");
@@ -87,40 +119,11 @@ const displayDetails = (book) => {
 
     populateEditForm(book);
 };
-
-
-
-const addEditBook = async (e) => {
-    e.preventDefault();
-    const form = document.getElementById("add-edit-book-form");
-    const formData = new FormData(form);
-
-    if (form._id.value != -1) { // Edit book
-        formData.append("id", form._id.value); // Assuming _id is used for book ID
-        response = await fetch("/api/books/edit", {
-            method: "PUT",
-            body: formData
-        });
-    } else { // Add new book
-        formData.delete("_id");
-        formData.delete("img");
-        formData.append("summaries", getSummaries());
-
-        response = await fetch("/api/books", {
-            method: "POST",
-            body: formData
-        });
-    }
-
-    //successfully got data from server
-    if (response.status != 200) {
-        console.log("Error posting data");
-    }
-
-    response = await response.json();
-    resetForm();
-    document.querySelector(".dialog").classList.add("transparent");
-    showBooks();
+const populateEditForm = (book) => {
+    document.getElementById("name").value = book.name;
+    document.getElementById("description").value = book.description;
+    // Populate other fields as necessary
+    document.getElementById("book-id").value = book._id;
 };
 
 const getSummaries = () => {
@@ -155,16 +158,6 @@ const addBook = (e) => {
     input.type = "text";
     section.append(input);
 }
-const confirmDelete = async (bookId) => {
-    if (confirm("Are you sure you want to delete this book?")) {
-        await fetch(`/api/books/${bookId}`, {
-            method: "DELETE"
-        });
-        showBooks();
-    }
-};
-
-
 
 window.onload = () => {
     showBooks();
