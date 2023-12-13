@@ -72,10 +72,7 @@ const displayDetails = (book) => {
 
   const ul = document.createElement("ul");
   bookDetails.append(ul);
-  const deleteButton = document.createElement('button');
-  deleteButton.textContent = 'Delete';
-  deleteButton.onclick = () => deleteBook(book._id);
-  detailsDiv.appendChild(deleteButton);
+ 
   console.log(book.summary);
   book.summaries.forEach((summary) => {
     const li = document.createElement("li");
