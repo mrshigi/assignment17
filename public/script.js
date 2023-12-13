@@ -96,7 +96,7 @@ const displayDetails = (book) => {
   populateEditForm(book);
 };
 
-document.getElementById('edit-form').addEventListener('submit', handleEditFormSubmit);
+//document.getElementById('edit-form').addEventListener('submit', handleEditFormSubmit);
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
