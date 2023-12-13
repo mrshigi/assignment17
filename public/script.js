@@ -1,6 +1,6 @@
 const getBooks = async () => {
   try {
-    const response = await fetch("https://a16.onrender.com/api/books");
+    const response = await fetch("https://a17-dxv5.onrender.com/api/books");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -32,7 +32,7 @@ const showBooks = async () => {
       const description = document.createElement("div");
 
       // Set content and attributes
-      img.src = book.img ? book.img : ''; // Set image source
+      img.src = book.img ? book.img : 'https://a17-dxv5.onrender.com/'+book.img; // Set image source
       name.textContent = book.name;
       description.textContent = book.description;
 
