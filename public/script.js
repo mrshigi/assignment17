@@ -1,12 +1,14 @@
 const getBooks = async () => {
   try {
-    return (
-        await fetch("https://a16.onrender.com/api/books")).json();
+    const response = await fetch("https://a16.onrender.com/api/books");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching books:", error);
   }
 };
-
 const showBooks = async () => {
   let books = await getBooks();
   let booksDiv = document.getElementById("book-list");
@@ -112,60 +114,68 @@ const displayDetails = (book) => {
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
-  form._id.value = book._id; // Assuming each book has a unique '_id'
+  form._id.value = book._id;
   document.getElementById("name").value = book.name;
   document.getElementById("description").value = book.description;
-  document.getElementById("summaries").value = book.summary;
-  document.getElementById("img").value = book.img;
+  document.getElementById("summaries").value = book.summaries.join(", ");
   document.getElementById("add-edit-title").textContent = "Edit Book";
   document.querySelector(".dialog").classList.remove("transparent");
 };
-async function handleEditFormSubmit(event) {
+
+const handleEditFormSubmit = async (event) => {
   event.preventDefault();
-  document
-    .getElementById("add-edit-book-container")
-    .addEventListener("submit", handleEditFormSubmit);
   const formData = new FormData(event.target);
-  const response = await fetch("/api/books/" + formData.get("book-id"), {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(Object.fromEntries(formData)),
-  });
-  if (response.ok) {
-    displayBooks(); // Refresh the book list
-  } else {
-    alert("Failed to update the book");
+  formData.append("summaries", getSummaries().join(","));
+
+  try {
+    const response = await fetch("/api/books/" + formData.get("_id"), {
+      method: "PUT",
+      body: formData,
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    await showBooks(); // Refresh the book list
+  } catch (error) {
+    console.error("Error updating book:", error);
   }
-}
+};
 
 const addEditBook = async (e) => {
   e.preventDefault();
   const form = document.getElementById("add-edit-book-form");
   const formData = new FormData(form);
-  let response;
-  //trying to add a new "book lol tuff"
-  if (form._id.value == -1) {
-    formData.delete("_id");
-    formData.delete("img");
-    formData.append("summaries", getSummaries());
 
-    console.log(...formData);
+  // Append summaries for both new and edited books
+  formData.append("summaries", getSummaries().join(","));
 
-    response = await fetch("/api/books", {
-      method: "POST",
+  try {
+    let url =
+      form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let method = form._id.value === "-1" ? "POST" : "PUT";
+
+    // If adding a new book, delete the _id field
+    if (form._id.value === "-1") {
+      formData.delete("_id");
+    }
+
+    let response = await fetch(url, {
+      method: method,
       body: formData,
     });
-  }
 
-  //successfully got data from server
-  if (response.status != 200) {
-    console.log("Error posting data");
-  }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-  response = await response.json();
-  resetForm();
-  document.querySelector(".dialog").classList.add("transparent");
-  showBooks();
+    // Handle the response and update UI
+    await response.json();
+    resetForm();
+    document.querySelector(".dialog").classList.add("transparent");
+    showBooks();
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  }
 };
 
 const addDeleteButton = (book, bookElement) => {

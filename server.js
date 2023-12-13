@@ -78,36 +78,52 @@ let books = [
 app.get("/api/books", (req, res) => {
   res.send(books);
 });
-
 app.post("/api/books", upload.single("img"), (req, res) => {
-  const result = validateBook(req.body);
-
-  if (result.error) {
-    res.status(400).send(result.error.details[0].message);
-    return;
-  }
-
-  const book = {
-    _id: books.length + 1,
-    name: req.body.name,
-    description: req.body.description,
-    summaries: req.body.summaries.split(","),
-  };
-
-  books.push(book);
-  res.send(books);
-});
-app.put("/api/books/:id", (req, res) => {
-  const bookIndex = books.findIndex((b) => b._id == req.params.id);
-  if (bookIndex === -1) {
-    res.status(404).send("Book not found");
-    return;
-  }
-
-  const updatedBook = { ...books[bookIndex], ...req.body };
-  books[bookIndex] = updatedBook;
-  res.send(updatedBook);
-});
+    const bookData = {
+      name: req.body.name,
+      description: req.body.description,
+      summaries: req.body.summaries.split(","),
+      img: req.file ? req.file.filename : ""
+    };
+  
+    const { error } = validateBook(bookData);
+  
+    if (error) {
+      res.status(400).send(error.details[0].message);
+      return;
+    }
+  
+    const book = {
+      _id: books.length + 1,
+      ...bookData
+    };
+  
+    books.push(book);
+    res.send(books);
+  });
+  app.put("/api/books/:id", upload.single("img"), (req, res) => {
+    const bookIndex = books.findIndex((b) => b._id == req.params.id);
+    if (bookIndex === -1) {
+      res.status(404).send("Book not found");
+      return;
+    }
+  
+    const updatedData = {
+      name: req.body.name,
+      description: req.body.description,
+      summaries: req.body.summaries.split(","),
+      img: req.file ? req.file.filename : books[bookIndex].img
+    };
+  
+    const { error } = validateBook(updatedData);
+    if (error) {
+      res.status(400).send(error.details[0].message);
+      return;
+    }
+  
+    books[bookIndex] = { _id: books[bookIndex]._id, ...updatedData };
+    res.send(books[bookIndex]);
+  });
 app.delete("/api/books/:id", (req, res) => {
   const bookIndex = books.findIndex((b) => b._id == req.params.id);
   if (bookIndex === -1) {
@@ -124,6 +140,7 @@ const validateBook = (book) => {
     summaries: Joi.allow(""),
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
+    img: Joi.string().allow("")
   });
 
   return schema.validate(book);
