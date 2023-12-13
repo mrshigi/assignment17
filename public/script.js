@@ -92,7 +92,7 @@ const displayDetails = (book) => {
   populateEditForm(book);
 };
 
-document.getElementById('add-edit-book-container').addEventListener('submit', handleEditFormSubmit);
+//document.getElementById('add-edit-book-container').addEventListener('submit', handleEditFormSubmit);
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
@@ -238,7 +238,7 @@ window.onload = () => {
   showBooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditBook;
   document.getElementById("add-link").onclick = showHideAdd;
-
+  
   document.querySelector(".close").onclick = () => {
     document.querySelector(".dialog").classList.add("transparent");
   };
