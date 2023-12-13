@@ -96,7 +96,27 @@ const book = {
 books.push(book);
 res.send(books);
 });
+app.put('/api/books/:id', (req, res) => {
+    const bookIndex = books.findIndex(b => b._id == req.params.id);
+    if (bookIndex === -1) {
+        res.status(404).send('Book not found');
+        return;
+    }
 
+    const updatedBook = { ...books[bookIndex], ...req.body };
+    books[bookIndex] = updatedBook;
+    res.send(updatedBook);
+});
+app.delete('/api/books/:id', (req, res) => {
+    const bookIndex = books.findIndex(b => b._id == req.params.id);
+    if (bookIndex === -1) {
+        res.status(404).send('Book not found');
+        return;
+    }
+
+    books.splice(bookIndex, 1);
+    res.status(200).send('Book deleted');
+});
 const validateBook = (book) => {
 const schema = Joi.object({
     _id: Joi.allow(""),

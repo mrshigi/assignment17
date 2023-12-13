@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js"></script>
 </head>
-
 <body>
     <header>
         <h1>Books</h1>
@@ -16,31 +14,30 @@
         <div id="book-list" class="columns"></div>
         <div id="book-details-column">
             <h2>Details</h2>
-
             <div id="book-details"></div>
         </div>
     </div>
+
     <div id="add-edit-book-container" class="dialog transparent">
         <span class="close">&times;</span>
-
         <h3 id="add-edit-title">Book</h3>
         <form id="add-edit-book-form" method="post">
-            <input type="hidden" name="_id" value="-1" />
+            <!-- Hidden input for book ID (used in editing) -->
+            <input type="hidden" id="book-id" name="book-id" value="-1" />
+
             <p>
-                <label for="name ">Book Name:</label>
+                <label for="name">Book Name:</label>
                 <input type="text" id="name" name="name" required />
             </p>
             <p>
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description" required />
             </p>
-
             <p>
                 <label for="img">Upload Image:</label>
                 <input type="file" id="img" name="img" />
             </p>
-
-            <p id="book-p ">
+            <p id="book-p">
                 <label class="inline">Summary:</label>
                 <a href="#" id="add-summary">Add Book</a>
                 <section id="summary-boxes"></section>
@@ -51,5 +48,4 @@
         </form>
     </div>
 </body>
-
 </html>
