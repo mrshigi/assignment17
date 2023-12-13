@@ -36,16 +36,16 @@ const showBooks = async () => {
 };
 // Function to delete a book
 async function deleteBook(bookId) {
-    if (confirm('Are you sure you want to delete this book?')) {
-        const response = await fetch('/api/books/' + bookId, {
-            method: 'DELETE'
-        });
-        if (response.ok) {
-            displayBooks(); // Refresh the book list
-        } else {
-            alert('Failed to delete the book');
-        }
+  if (confirm("Are you sure you want to delete this book?")) {
+    const response = await fetch("/api/books/" + bookId, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      displayBooks(); // Refresh the book list
+    } else {
+      alert("Failed to delete the book");
     }
+  }
 }
 
 const displayDetails = (book) => {
@@ -72,7 +72,6 @@ const displayDetails = (book) => {
 
   const ul = document.createElement("ul");
   bookDetails.append(ul);
- 
   console.log(book.summary);
   book.summaries.forEach((summary) => {
     const li = document.createElement("li");
@@ -93,7 +92,7 @@ const displayDetails = (book) => {
   populateEditForm(book);
 };
 
-//document.getElementById('edit-form').addEventListener('submit', handleEditFormSubmit);
+document.getElementById('add-edit-book-container').addEventListener('submit', handleEditFormSubmit);
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
@@ -106,20 +105,19 @@ const populateEditForm = (book) => {
   document.querySelector(".dialog").classList.remove("transparent");
 };
 async function handleEditFormSubmit(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    const response = await fetch('/api/books/' + formData.get('book-id'), {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(Object.fromEntries(formData))
-    });
-    if (response.ok) {
-        displayBooks(); // Refresh the book list
-    } else {
-        alert('Failed to update the book');
-    }
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const response = await fetch("/api/books/" + formData.get("book-id"), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(Object.fromEntries(formData)),
+  });
+  if (response.ok) {
+    displayBooks(); // Refresh the book list
+  } else {
+    alert("Failed to update the book");
+  }
 }
-
 
 const addEditBook = async (e) => {
   e.preventDefault();
@@ -161,18 +159,20 @@ const addEditBook = async (e) => {
   showBooks();
 };
 const addDeleteButton = (book, bookElement) => {
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
-    deleteBtn.onclick = async () => {
-        if (confirm("Are you sure you want to delete this book?")) {
-            // Send DELETE request
-            const response = await fetch(`/api/books/${book._id}`, { method: "DELETE" });
-            if (response.ok) {
-                bookElement.remove(); // Remove the book element from the DOM
-            }
-        }
-    };
-    bookElement.appendChild(deleteBtn);
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.onclick = async () => {
+    if (confirm("Are you sure you want to delete this book?")) {
+      // Send DELETE request
+      const response = await fetch(`/api/books/${book._id}`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        bookElement.remove(); // Remove the book element from the DOM
+      }
+    }
+  };
+  bookElement.appendChild(deleteBtn);
 };
 const getSummaries = () => {
   const inputs = document.querySelectorAll("#summary-boxes input");
@@ -207,31 +207,31 @@ const addBook = (e) => {
   section.append(input);
 };
 async function saveEditedBook(formData) {
-    const response = await fetch('/api/books/' + formData.get('_id'), {
-        method: 'PUT',
-        body: formData
-    });
-    if (response.status === 200) {
-        // Update view
-        showBooks();
-    } else {
-        // Handle error
-        console.error('Error updating book');
-    }
+  const response = await fetch("/api/books/" + formData.get("_id"), {
+    method: "PUT",
+    body: formData,
+  });
+  if (response.status === 200) {
+    // Update view
+    showBooks();
+  } else {
+    // Handle error
+    console.error("Error updating book");
+  }
 }
 async function deleteBook(bookId) {
-    if (confirm("Are you sure you want to delete this book?")) {
-        const response = await fetch('/api/books/' + bookId, {
-            method: 'DELETE'
-        });
-        if (response.status === 200) {
-            // Update view
-            showBooks();
-        } else {
-            // Handle error
-            console.error('Error deleting book');
-        }
+  if (confirm("Are you sure you want to delete this book?")) {
+    const response = await fetch("/api/books/" + bookId, {
+      method: "DELETE",
+    });
+    if (response.status === 200) {
+      // Update view
+      showBooks();
+    } else {
+      // Handle error
+      console.error("Error deleting book");
     }
+  }
 }
 
 window.onload = () => {
