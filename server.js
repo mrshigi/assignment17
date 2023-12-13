@@ -8,14 +8,33 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 
-const upload = multer({ dest: __dirname + "/public/images" });
 
 mongoose
   .connect("mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority")
   .then(() => console.log("Connected to mongodb..."))
   .catch((err) => console.error("could not connect ot mongodb...", err));
 
+  const bookSchema = new mongoose.Schema({
+    name: String,
+    description: String,
+    rating: Number,
+    summaries: [String],
+    img: String // Store the image path
+  });
 
+  const Book = mongoose.model('Book', bookSchema);
+
+// Configure Multer for image uploads
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, 'public/uploads/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
@@ -85,61 +104,56 @@ let books = [
 app.get("/api/books", (req, res) => {
   res.send(books);
 });
-app.post("/api/books", upload.single("img"), (req, res) => {
-    const bookData = {
-      name: req.body.name,
-      description: req.body.description,
-      summaries: req.body.summaries.split(","),
-      img: req.file ? req.file.filename : ""
-    };
-  
-    const { error } = validateBook(bookData);
-  
-    if (error) {
-      res.status(400).send(error.details[0].message);
-      return;
-    }
-  
-    const book = {
-      _id: books.length + 1,
-      ...bookData
-    };
-  
-    books.push(book);
-    res.send(books);
-  });
-  app.put("/api/books/:id", upload.single("img"), (req, res) => {
-    const bookIndex = books.findIndex((b) => b._id == req.params.id);
-    if (bookIndex === -1) {
-      res.status(404).send("Book not found");
-      return;
-    }
-  
-    const updatedData = {
-      name: req.body.name,
-      description: req.body.description,
-      summaries: req.body.summaries.split(","),
-      img: req.file ? req.file.filename : books[bookIndex].img
-    };
-  
-    const { error } = validateBook(updatedData);
-    if (error) {
-      res.status(400).send(error.details[0].message);
-      return;
-    }
-  
-    books[bookIndex] = { _id: books[bookIndex]._id, ...updatedData };
-    res.send(books[bookIndex]);
-  });
-app.delete("/api/books/:id", (req, res) => {
-  const bookIndex = books.findIndex((b) => b._id == req.params.id);
-  if (bookIndex === -1) {
-    res.status(404).send("Book not found");
-    return;
-  }
+app.post('/api/books', upload.single('img'), async (req, res) => {
+  // Validate data with Joi
+  const { error } = bookValidationSchema.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-  books.splice(bookIndex, 1);
-  res.status(200).send("Book deleted");
+  // Create a new book instance
+  const book = new Book({
+    name: req.body.name,
+    description: req.body.description,
+    rating: req.body.rating,
+    summaries: req.body.summaries.split(','),
+    img: req.file.path
+  });
+
+  try {
+    await book.save();
+    res.send(book);
+  } catch (err) {
+    res.status(500).send('Error saving book');
+  }
+});
+app.put('/api/books/:id', upload.single('img'), async (req, res) => {
+  // Validate data with Joi
+  const { error } = bookValidationSchema.validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const book = await Book.findByIdAndUpdate(req.params.id, {
+      name: req.body.name,
+      description: req.body.description,
+      rating: req.body.rating,
+      summaries: req.body.summaries.split(','),
+      img: req.file ? req.file.path : req.body.img
+    }, { new: true });
+
+    if (!book) return res.status(404).send('Book not found');
+    res.send(book);
+  } catch (err) {
+    res.status(500).send('Error updating book');
+  }
+});
+
+app.delete('/api/books/:id', async (req, res) => {
+  try {
+    const book = await Book.findByIdAndRemove(req.params.id);
+    if (!book) return res.status(404).send('Book not found');
+    res.send(book);
+  } catch (err) {
+    res.status(500).send('Error deleting book');
+  }
 });
 const validateBook = (book) => {
   const schema = Joi.object({

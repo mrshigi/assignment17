@@ -10,32 +10,43 @@ const getBooks = async () => {
   }
 };
 const showBooks = async () => {
-  let books = await getBooks();
-  let booksDiv = document.getElementById("book-list");
-  booksDiv.innerHTML = "";
-  books.forEach((book) => {
-    const section = document.createElement("section");
-    section.classList.add("book");
-    booksDiv.append(section);
+  try {
+    const response = await fetch("/api/books");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-    let img = document.createElement("img");
-    section.append(img);
-    img.src = "https://a16.onrender.com/" + book.img;
+    const books = await response.json();
 
-    const a = document.createElement("a");
-    a.href = "#";
-    section.append(a);
+    // Clear existing books
+    const booksContainer = document.getElementById("books-container");
+    booksContainer.innerHTML = "";
 
-    const h3 = document.createElement("h3");
-    h3.innerHTML = book.name;
-    a.append(h3);
-    addDeleteButton(book, section);
+    books.forEach(book => {
+      // Create elements for each book
+      const bookDiv = document.createElement("div");
+      bookDiv.className = "book";
 
-    a.onclick = (e) => {
-      e.preventDefault();
-      displayDetails(book);
-    };
-  });
+      const img = document.createElement("img");
+      const name = document.createElement("div");
+      const description = document.createElement("div");
+
+      // Set content and attributes
+      img.src = book.img ? book.img : ''; // Set image source
+      name.textContent = book.name;
+      description.textContent = book.description;
+
+      // Append elements to the bookDiv
+      bookDiv.appendChild(img);
+      bookDiv.appendChild(name);
+      bookDiv.appendChild(description);
+
+      // Append bookDiv to the books container
+      booksContainer.appendChild(bookDiv);
+    });
+  } catch (error) {
+    console.error("Error fetching books:", error);
+  }
 };
 async function saveEditedBook(formData) {
   const response = await fetch("/api/books/" + formData.get("_id"), {
@@ -149,9 +160,19 @@ const addEditBook = async (e) => {
   // Append summaries for both new and edited books
   formData.append("summaries", getSummaries().join(","));
 
+  if (formData.get("name").trim().length < 3) {
+    alert("Name must be at least 3 characters long.");
+    return;
+  }
+
+  if (formData.get("description").trim().length < 3) {
+    alert("Description must be at least 3 characters long.");
+    return;
+  }
+
+  // Add or Edit Book
   try {
-    let url =
-      form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let url = form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
     let method = form._id.value === "-1" ? "POST" : "PUT";
 
     // If adding a new book, delete the _id field
@@ -162,6 +183,7 @@ const addEditBook = async (e) => {
     let response = await fetch(url, {
       method: method,
       body: formData,
+      headers: { 'Accept': 'application/json' }
     });
 
     if (!response.ok) {

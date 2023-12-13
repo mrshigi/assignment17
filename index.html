@@ -27,19 +27,20 @@
         <form id="add-edit-book-form" method="post">
             <input type="hidden" name="_id" value="-1" />
             <p>
-                <label for="name ">Book Name:</label>
+                <label for="name">Book Name:</label>
                 <input type="text" id="name" name="name" required />
             </p>
             <p>
                 <label for="description">Description:</label>
                 <input type="text" id="description" name="description" required />
             </p>
-
+            
+            <!-- File input for image upload -->
             <p>
                 <label for="img">Upload Image:</label>
-                <input type="file" id="img" name="img" />
+                <input type="file" id="img" name="img" accept="image/*" />
             </p>
-
+            
             <p id="book-p ">
                 <label class="inline">Summary:</label>
                 <a href="#" id="add-summary">Add Book</a>
