@@ -1,6 +1,7 @@
 const getBooks = async () => {
   try {
-    return (await fetch("https://a16.onrender.com/api/books")).json();
+    return (
+        await fetch("https://a16.onrender.com/api/books")).json();
   } catch (error) {
     console.log(error);
   }
@@ -35,33 +36,33 @@ const showBooks = async () => {
   });
 };
 async function saveEditedBook(formData) {
-    const response = await fetch("/api/books/" + formData.get("_id"), {
-      method: "PUT",
-      body: formData,
+  const response = await fetch("/api/books/" + formData.get("_id"), {
+    method: "PUT",
+    body: formData,
+  });
+  if (response.status === 200) {
+    // Update view
+    showBooks();
+  } else {
+    // Handle error
+    console.error("Error updating book");
+  }
+}
+
+async function deleteBook(bookId) {
+  if (confirm("Are you sure you want to delete this book?")) {
+    const response = await fetch("/api/books/" + bookId, {
+      method: "DELETE",
     });
     if (response.status === 200) {
       // Update view
       showBooks();
     } else {
       // Handle error
-      console.error("Error updating book");
+      console.error("Error deleting book");
     }
-  };
-  
-  async function deleteBook(bookId) {
-    if (confirm("Are you sure you want to delete this book?")) {
-      const response = await fetch("/api/books/" + bookId, {
-        method: "DELETE",
-      });
-      if (response.status === 200) {
-        // Update view
-        showBooks();
-      } else {
-        // Handle error
-        console.error("Error deleting book");
-      }
-    }
-  };
+  }
+}
 
 const displayDetails = (book) => {
   const bookDetails = document.getElementById("book-details");
@@ -114,7 +115,7 @@ const populateEditForm = (book) => {
   form._id.value = book._id; // Assuming each book has a unique '_id'
   document.getElementById("name").value = book.name;
   document.getElementById("description").value = book.description;
-  document.getElementById("summaries").value = book.summaries;
+  document.getElementById("summaries").value = book.summary;
   document.getElementById("img").value = book.img;
   document.getElementById("add-edit-title").textContent = "Edit Book";
   document.querySelector(".dialog").classList.remove("transparent");
@@ -138,35 +139,35 @@ async function handleEditFormSubmit(event) {
 }
 
 const addEditBook = async (e) => {
-    e.preventDefault();
-    const form = document.getElementById("add-edit-book-form");
-    const formData = new FormData(form);
-    let response;
-    //trying to add a new "book lol tuff"
-    if (form._id.value == -1) {
-      formData.delete("_id");
-      formData.delete("img");
-      formData.append("summaries", getSummaries());
-  
-      console.log(...formData);
-  
-      response = await fetch("/api/books", {
-        method: "POST",
-        body: formData,
-      });
-    }
-  
-    //successfully got data from server
-    if (response.status != 200) {
-      console.log("Error posting data");
-    }
-  
-    response = await response.json();
-    resetForm();
-    document.querySelector(".dialog").classList.add("transparent");
-    showBooks();
-  };
-  
+  e.preventDefault();
+  const form = document.getElementById("add-edit-book-form");
+  const formData = new FormData(form);
+  let response;
+  //trying to add a new "book lol tuff"
+  if (form._id.value == -1) {
+    formData.delete("_id");
+    formData.delete("img");
+    formData.append("summaries", getSummaries());
+
+    console.log(...formData);
+
+    response = await fetch("/api/books", {
+      method: "POST",
+      body: formData,
+    });
+  }
+
+  //successfully got data from server
+  if (response.status != 200) {
+    console.log("Error posting data");
+  }
+
+  response = await response.json();
+  resetForm();
+  document.querySelector(".dialog").classList.add("transparent");
+  showBooks();
+};
+
 const addDeleteButton = (book, bookElement) => {
   const deleteBtn = document.createElement("button");
   deleteBtn.textContent = "Delete";
@@ -209,23 +210,21 @@ const showHideAdd = (e) => {
 };
 
 const addBook = (e) => {
-    e.preventDefault();
-    const section = document.getElementById("summary-boxes");
-    const input = document.createElement("input");
-    input.type = "text";
-    section.append(input);
-  };
-
+  e.preventDefault();
+  const section = document.getElementById("summary-boxes");
+  const input = document.createElement("input");
+  input.type = "text";
+  section.append(input);
+};
 
 window.onload = () => {
-    showBooks();
-    document.getElementById("add-edit-book-form").onsubmit = addEditBook;
-    document.getElementById("add-link").onclick = showHideAdd;
-  
-    document.querySelector(".close").onclick = () => {
-      document.querySelector(".dialog").classList.add("transparent");
-    };
-  
-    document.getElementById("add-summary").onclick = addBook;
+  showBooks();
+  document.getElementById("add-edit-book-form").onsubmit = addEditBook;
+  document.getElementById("add-link").onclick = showHideAdd;
+
+  document.querySelector(".close").onclick = () => {
+    document.querySelector(".dialog").classList.add("transparent");
   };
-  
+
+  document.getElementById("add-summary").onclick = addBook;
+};
