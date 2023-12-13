@@ -18,11 +18,13 @@ const showBooks = async () => {
 
     const books = await response.json();
 
-    // Clear existing books
     const booksContainer = document.getElementById("books-container");
-    booksContainer.innerHTML = "";
-
-    books.forEach(book => {
+    if (booksContainer) {
+      booksContainer.innerHTML = "";
+    } else {
+      console.error("Books container element not found");
+    }
+    books.forEach((book) => {
       // Create elements for each book
       const bookDiv = document.createElement("div");
       bookDiv.className = "book";
@@ -32,7 +34,9 @@ const showBooks = async () => {
       const description = document.createElement("div");
 
       // Set content and attributes
-      img.src = book.img ? book.img : 'https://a17-dxv5.onrender.com/'+book.img; // Set image source
+      img.src = book.img
+        ? book.img
+        : "https://a17-dxv5.onrender.com/" + book.img; // Set image source
       name.textContent = book.name;
       description.textContent = book.description;
 
@@ -160,19 +164,21 @@ const addEditBook = async (e) => {
   // Append summaries for both new and edited books
   formData.append("summaries", getSummaries().join(","));
 
+  // Client-side validation
   if (formData.get("name").trim().length < 3) {
-    alert("Name must be at least 3 characters long.");
+    displayError("Name must be at least 3 characters long.");
     return;
   }
 
   if (formData.get("description").trim().length < 3) {
-    alert("Description must be at least 3 characters long.");
+    displayError("Description must be at least 3 characters long.");
     return;
   }
 
   // Add or Edit Book
   try {
-    let url = form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let url =
+      form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
     let method = form._id.value === "-1" ? "POST" : "PUT";
 
     // If adding a new book, delete the _id field
@@ -183,11 +189,13 @@ const addEditBook = async (e) => {
     let response = await fetch(url, {
       method: method,
       body: formData,
-      headers: { 'Accept': 'application/json' }
+      headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      displayError(errorData.message);
+      return;
     }
 
     // Handle the response and update UI
@@ -196,9 +204,18 @@ const addEditBook = async (e) => {
     document.querySelector(".dialog").classList.add("transparent");
     showBooks();
   } catch (error) {
-    console.error("Error submitting form:", error);
+    displayError("Error submitting form: " + error.message);
   }
 };
+function displayError(errorMessage) {
+  const errorElement = document.getElementById("error-message");
+  if (errorElement) {
+    errorElement.textContent = errorMessage;
+    errorElement.style.display = "block";
+  } else {
+    console.error("Error message element not found");
+  }
+}
 
 const addDeleteButton = (book, bookElement) => {
   const deleteBtn = document.createElement("button");

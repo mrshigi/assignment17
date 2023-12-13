@@ -11,7 +11,7 @@
         <h1>Books</h1>
         <a href="#" id="add-link">Add Book&#9959;</a>
     </header>
-
+    <div id="error-message" style="display: none; color: red; margin: 10px 0; font-weight: bold;"></div>
     <div class="columns two-columns">
         <div id="book-list" class="columns"></div>
         <div id="book-details-column">
@@ -24,7 +24,7 @@
         <span class="close">&times;</span>
 
         <h3 id="add-edit-title">Book</h3>
-        <form id="add-edit-book-form" method="post">
+        <form id="add-edit-book-form" method="post" enctype="multipart/form-data">
             <input type="hidden" name="_id" value="-1" />
             <p>
                 <label for="name">Book Name:</label>
@@ -40,7 +40,7 @@
                 <label for="img">Upload Image:</label>
                 <input type="file" id="img" name="img" accept="image/*" />
             </p>
-            
+
             <p id="book-p ">
                 <label class="inline">Summary:</label>
                 <a href="#" id="add-summary">Add Book</a>
