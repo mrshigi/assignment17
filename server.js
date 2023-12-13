@@ -2,12 +2,19 @@ const express = require("express");
 const app = express();
 const Joi = require("joi");
 const multer = require("multer");
+const mongoose = require("mongoose");
 app.use(express.static("public"));
 app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 
 const upload = multer({ dest: __dirname + "/public/images" });
+
+mongoose
+  .connect("mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority")
+  .then(() => console.log("Connected to mongodb..."))
+  .catch((err) => console.error("could not connect ot mongodb...", err));
+
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
