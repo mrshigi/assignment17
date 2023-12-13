@@ -106,6 +106,7 @@ const populateEditForm = (book) => {
 };
 async function handleEditFormSubmit(event) {
   event.preventDefault();
+  document.getElementById('add-edit-book-container').addEventListener('submit', handleEditFormSubmit);
   const formData = new FormData(event.target);
   const response = await fetch("/api/books/" + formData.get("book-id"), {
     method: "PUT",
