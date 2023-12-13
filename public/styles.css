@@ -27,7 +27,7 @@ body {
 .book {
   padding: 10px;
   margin: 10px;
-  background:#0753a53b;;
+  background: #0753a53b;
   border-radius: 5px;
 }
 
@@ -110,7 +110,7 @@ label {
 /* Modal Content */
 
 .dialog {
-  background-color:#0753a545;;
+  background-color: #0753a545;
   margin: auto;
   padding: 20px;
   border: 1px solid #888;

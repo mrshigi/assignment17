@@ -106,7 +106,9 @@ const populateEditForm = (book) => {
 };
 async function handleEditFormSubmit(event) {
   event.preventDefault();
-  document.getElementById('add-edit-book-container').addEventListener('submit', handleEditFormSubmit);
+  document
+    .getElementById("add-edit-book-container")
+    .addEventListener("submit", handleEditFormSubmit);
   const formData = new FormData(event.target);
   const response = await fetch("/api/books/" + formData.get("book-id"), {
     method: "PUT",
@@ -239,7 +241,7 @@ window.onload = () => {
   showBooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditBook;
   document.getElementById("add-link").onclick = showHideAdd;
-  
+
   document.querySelector(".close").onclick = () => {
     document.querySelector(".dialog").classList.add("transparent");
   };
