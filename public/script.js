@@ -34,19 +34,34 @@ const showBooks = async () => {
     };
   });
 };
-// Function to delete a book
-async function deleteBook(bookId) {
-  if (confirm("Are you sure you want to delete this book?")) {
-    const response = await fetch("/api/books/" + bookId, {
-      method: "DELETE",
+async function saveEditedBook(formData) {
+    const response = await fetch("/api/books/" + formData.get("_id"), {
+      method: "PUT",
+      body: formData,
     });
-    if (response.ok) {
-      displayBooks(); // Refresh the book list
+    if (response.status === 200) {
+      // Update view
+      showBooks();
     } else {
-      alert("Failed to delete the book");
+      // Handle error
+      console.error("Error updating book");
     }
-  }
-}
+  };
+  
+  async function deleteBook(bookId) {
+    if (confirm("Are you sure you want to delete this book?")) {
+      const response = await fetch("/api/books/" + bookId, {
+        method: "DELETE",
+      });
+      if (response.status === 200) {
+        // Update view
+        showBooks();
+      } else {
+        // Handle error
+        console.error("Error deleting book");
+      }
+    }
+  };
 
 const displayDetails = (book) => {
   const bookDetails = document.getElementById("book-details");
@@ -209,33 +224,8 @@ const addBook = (e) => {
   input.type = "text";
   section.append(input);
 };
-async function saveEditedBook(formData) {
-  const response = await fetch("/api/books/" + formData.get("_id"), {
-    method: "PUT",
-    body: formData,
-  });
-  if (response.status === 200) {
-    // Update view
-    showBooks();
-  } else {
-    // Handle error
-    console.error("Error updating book");
-  }
-}
-async function deleteBook(bookId) {
-  if (confirm("Are you sure you want to delete this book?")) {
-    const response = await fetch("/api/books/" + bookId, {
-      method: "DELETE",
-    });
-    if (response.status === 200) {
-      // Update view
-      showBooks();
-    } else {
-      // Handle error
-      console.error("Error deleting book");
-    }
-  }
-}
+
+
 
 window.onload = () => {
   showBooks();
