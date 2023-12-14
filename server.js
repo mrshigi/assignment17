@@ -16,11 +16,12 @@ app.use(cors());
 
 // MongoDB connection
 mongoose
-  .connect(
-    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
-  )
+  .connect("mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/")
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 // Multer configuration for image upload
 const storage = multer.diskStorage({
@@ -65,8 +66,7 @@ app.post("/api/books", upload.single("img"), async (req, res) => {
     const { error } = validateBook(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    let book = new Book({
-      id: req.body.id,
+    const book = new Book({
       name: req.body.name,
       description: req.body.description,
       summaries: req.body.summaries.split(","),

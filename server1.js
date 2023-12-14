@@ -14,7 +14,7 @@ app.use(cors());
 // MongoDB connection
 mongoose
   .connect(
-    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/"
   )
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
@@ -45,11 +45,11 @@ const bookschema= new mongoose.Schema({
 const Book = mongoose.model("Book", bookschema);
 
 app.get("/api/books", (req, res) => {
-  getbooks(res);
+  getBooks(res);
 });
 
 
-const getbooks = async (res) => {
+const getBooks = async (res) => {
   const books = await Book.find();
   res.send(books);
 };
@@ -62,22 +62,22 @@ app.post("/api/books", upload.single("img"), (req, res) => {
     return;
   }
 
-  const Book = new Book({
+  const book = new Book({
     name: req.body.name,
     description: req.body.description,
     summaries: req.body.summaries.split(","),
   });
 
   if (req.file) {
-    Book.img = "images/" + req.file.filename;
+    book.img = "images/" + req.file.filename;
   }
 
-  createBook(Book, res);
+  createBook(book, res);
 });
 
-const createBook = async (Book, res) => {
-  const result = await Book.save();
-  res.send(Book);
+const createBook = async (book, res) => {
+  const result = await book.save();
+  res.send(book);
 };
 
 app.put("/api/books/:id", upload.single("img"), (req, res) => {
@@ -112,11 +112,11 @@ app.delete("/api/books/:id", upload.single("img"), (req, res) => {
 });
 
 const removeBook = async (res, id) => {
-  const Book = await Book.findByIdAndDelete(id);
-  res.send(Book);
+  const book = await Book.findByIdAndDelete(id);
+  res.send(book);
 };
 
-const validateBook = (Book) => {
+const validateBook = (book) => {
   const schema = Joi.object({
     _id: Joi.allow(""),
     name: Joi.string().min(3).required(),
@@ -125,9 +125,9 @@ const validateBook = (Book) => {
     img: Joi.string().optional(),
   });
 
-  return schema.validate(Book);
+  return schema.validate(book);
 };
 
 app.listen(3010, () => {
-  console.log("I'm listening");
+  console.log("666 satan mf");
 });
