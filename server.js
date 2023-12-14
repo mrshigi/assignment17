@@ -7,7 +7,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 const mongoose = require("mongoose");
-const upload = multer({ dest: __dirname + "/images" });
+const upload = multer({ dest: __dirname + "public/images" });
 // MongoDB connection
 mongoose
   .connect(
