@@ -1,6 +1,6 @@
 const getBooks = async () => {
   try {
-    const response = await fetch("mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority");
+    const response = await fetch("https://a17-dxv5.onrender.com/api/books");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -36,7 +36,7 @@ const showBooks = async () => {
       // Set content and attributes
       img.src = book.img
         ? book.img
-        : "mongodb+srv://sraudat:<password>@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority" + book.img; // Set image source
+        : "https://a17-dxv5.onrender.com/" + book.img; // Set image source
       name.textContent = book.name;
       description.textContent = book.description;
 
