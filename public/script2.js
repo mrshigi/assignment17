@@ -35,6 +35,8 @@ const showbooks = async () => {
   });
 };
 
+
+
 const displayDetails = (book) => {
   const bookDetails = document.getElementById("book-details");
   bookDetails.innerHTML = "";
@@ -99,24 +101,23 @@ async function deleteBook(_id) {
   showbooks();
 }
 
-
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
   form._id.value = book._id;
   form.name.value = book.name;
   form.description.value = book.description;
-  populateSummaries(book);
-};
-const populateSummaries = (book) => {
-  const section = document.getElementById("summary-boxes");
+  const summariesP = document.getElementById("summary-boxes");
+  summariesP.innerHTML = "";
+  console.log(book.summaries);
 
-  book.summaries.forEach((summaries) => {
+  for (let i in book.summaries) {
     const input = document.createElement("input");
     input.type = "text";
-    input.value = summaries;
-    section.append(input);
-  });
+    input.value = book.summaries[i];
+    summariesP.append(input);
+  }
 };
+
 
 // Helper function to display errors on the page
 
@@ -209,63 +210,6 @@ const showHideAdd = (e) => {
   resetForm();
 };
 
-
-const handleEditFormSubmit = async (event) => {
-  event.preventDefault();
-  const formData = new FormData(event.target);
-  formData.append("summaries", getSummaries().join(","));
-  try {
-    const response = await fetch(
-      "https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"),
-      {
-        method: "PUT",
-        body: formData,
-      }
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    await showbooks(); // Refresh the book list
-  } catch (error) {
-    console.error("Error updating book:", error);
-  }
-};
-async function saveEditedBook(formData) {
-  const response = await fetch(
-    "https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"),
-    {
-      method: "PUT",
-      body: formData,
-    }
-  );
-  if (response.status === 200) {
-    // Update view
-    showbooks();
-  } else {
-    // Handle error
-    console.error("Error updating book");
-  }
-}
-const addDeleteButton = (book, bookElement) => {
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.onclick = async () => {
-    if (confirm("Are you sure you want to delete this book?")) {
-      // Send DELETE request
-      const response = await fetch(
-        `https://a17-dxv5.onrender.com/api/books/${book._id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (response.ok) {
-        bookElement.remove(); // Remove the book element from the DOM
-        bookElement.remove(); 
-      }
-    }
-  };
-  bookElement.appendChild(deleteBtn);
-};
 window.onload = () => {
   showbooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditbook;
