@@ -162,7 +162,7 @@ const addEditbook = async (e) => {
   const form = document.getElementById("add-edit-book-form");
   const formData = new FormData(form);
   let response;
-  formData.append("summaries", getsummaries());
+  formData.append("summaries", getSummaries());
 
   //trying to add a new book
   if (form._id.value == -1) {
