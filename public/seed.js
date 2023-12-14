@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const Book = require('./bookModel');
 
 // Replace with your MongoDB connection string
-const mongoDB = 'mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority';
-mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose
+  .connect("mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority")
+  .then(() => console.log("Connected to MongoDB..."))
+  .catch((err) => console.error("Could not connect to MongoDB...", err));
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
