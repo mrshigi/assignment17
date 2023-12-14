@@ -15,7 +15,7 @@ mongoose
 // Multer configuration for image upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/images");
+    cb(null, ".uploads/images");
   },
   filename: function (req, file, cb) {
     cb(
@@ -33,6 +33,15 @@ const bookschema = new mongoose.Schema({
 });
 
 const Book = mongoose.model("Book", bookschema);
+const validateBook = (book) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+    description: Joi.string().min(3).required(),
+    summaries: Joi.string().required(),
+    img: Joi.string().optional(),
+  });
+  return schema.validate(book);
+};
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
@@ -108,17 +117,7 @@ const removeBook = async (res, id) => {
   const book = await Book.findByIdAndDelete(id);
   res.send(book);
 };
-const validateBook = (book) => {
-  const schema = Joi.object({
-    _id: Joi.allow(""),
-    name: Joi.string().min(3).required(),
-    description: Joi.string().min(3).required(),
-    summaries: Joi.array().items(Joi.string()).optional(),
-    img: Joi.string().optional(),
-  });
 
-  return schema.validate(book);
-};
 
 app.listen(3010, () => {
   console.log("666 satan mf");
