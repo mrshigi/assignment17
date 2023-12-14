@@ -72,7 +72,6 @@ const books = [
 ];
 
 async function seedBooks() {
-    await Book.deleteMany({}); // Clear existing books
 
     for (const bookData of books) {
         const book = new Book(bookData);
