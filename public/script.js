@@ -177,7 +177,8 @@ const addEditBook = async (e) => {
 
   // Add or Edit Book
   try {
-    let url = form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let url =
+      form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
     let method = form._id.value === "-1" ? "POST" : "PUT";
 
     // If adding a new book, delete the _id field
@@ -188,7 +189,7 @@ const addEditBook = async (e) => {
     let response = await fetch(url, {
       method: method,
       body: formData,
-      headers: { 'Accept': 'application/json' }
+      headers: { Accept: "application/json" },
     });
 
     if (!response.ok) {
@@ -204,6 +205,43 @@ const addEditBook = async (e) => {
     console.error("Error submitting form:", error);
   }
 };
+async function addEditBook(event) {
+  event.preventDefault();
+  const form = event.target;
+  const formData = new FormData(form);
+
+  // Handle summaries as an array
+  const summaries = getSummaries(); // Assuming getSummaries() returns an array
+  formData.set("summaries", JSON.stringify(summaries));
+
+  // Determine the URL and method based on whether it's an edit
+  const isEdit = form._id && form._id.value !== "-1";
+  let url = isEdit ? `/api/books/${form._id.value}` : "/api/books";
+  let method = isEdit ? "PUT" : "POST";
+
+  // If adding a new book, ensure _id is not included
+  if (!isEdit) {
+    formData.delete("_id");
+  }
+
+  try {
+    let response = await fetch(url, {
+      method: method,
+      body: formData,
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    await response.json();
+    resetForm();
+    document.querySelector(".dialog").classList.add("transparent");
+    showBooks();
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
 function displayError(errorMessage) {
   const errorElement = document.getElementById("error-message");
   if (errorElement) {

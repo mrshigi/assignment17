@@ -1,21 +1,22 @@
-const mongoose = require('mongoose');
-const Book = require('./public/bookModel');
+const mongoose = require("mongoose");
+const Book = require("./bookModel");
 
 // Replace with your MongoDB connection string
 mongoose
-  .connect("mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority")
+  .connect(
+    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
+  )
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 const books = [
   {
     _id: 1,
     name: "The Road",
     description: "Apocolyptic",
-    rating: 4,
     summaries: [
       "Basic Overview: A man and his son's journey",
       "Nuclear winter event happened",
@@ -36,7 +37,6 @@ const books = [
     _id: 2,
     name: "Neon Genesis: Evangelion",
     description: "Mecha Manga",
-    rating: 5,
     summaries: [
       "Basic Overview: Shinji Ikaris journey to self acceptance, via ending the world",
       "Get in the Eva Shinji",
@@ -55,7 +55,6 @@ const books = [
     _id: 3,
     name: "Options Pricing and Volatility",
     description: "Finance",
-    rating: 5,
     summaries: [
       "Basic Overview: The stock market wasnt enough of a way to lose money",
       "Introduce Forwards",
@@ -72,14 +71,13 @@ const books = [
   },
 ];
 async function seedBooks() {
+  for (const bookData of books) {
+    const book = new Book(bookData);
+    await book.save();
+  }
 
-    for (const bookData of books) {
-        const book = new Book(bookData);
-        await book.save();
-    }
-
-    console.log('Books have been seeded!');
-    db.close();
+  console.log("Books have been seeded!");
+  db.close();
 }
 
 seedBooks();

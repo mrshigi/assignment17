@@ -2,12 +2,12 @@ const express = require("express");
 const app = express();
 const Joi = require("joi");
 const multer = require("multer");
-const mongoDB= require('mongodb');
+const mongoDB = require("mongodb");
 const mongoose = require("mongoose");
 const path = require("path");
 
 // Update the path to the Book model located in the public folder
-const Book = require('./public/bookModel');
+const Book = require("./bookModel");
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -16,7 +16,9 @@ app.use(cors());
 
 // MongoDB connection
 mongoose
-  .connect("mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority")
+  .connect(
+    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
+  )
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 
@@ -26,7 +28,10 @@ const storage = multer.diskStorage({
     cb(null, "public/images");
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 const upload = multer({ storage: storage });
@@ -57,21 +62,25 @@ app.get("/api/books", async (req, res) => {
 
 // POST endpoint to add a new book
 app.post("/api/books", upload.single("img"), async (req, res) => {
-  const { error } = validateBook(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  try {
+    const { error } = validateBook(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  const book = new Book({
-    name: req.body.name,
-    description: req.body.description,
-    rating: req.body.rating,
-    summaries: req.body.summaries.split(","),
-    img: req.file ? req.file.path : "",
-  });
+    let book = new Book({
+      id: req.body.id,
+      name: req.body.name,
+      description: req.body.description,
+      summaries: req.body.summaries.split(","),
+      img: req.file ? req.file.path : "",
+    });
 
-  await book.save();
-  res.send(book);
+    book = await book.save();
+    res.send(book);
+  } catch (err) {
+    console.error("Error in POST /api/books:", err.message);
+    res.status(500).send("Server error");
+  }
 });
-
 // PUT endpoint to update a book
 app.put("/api/books/:id", upload.single("img"), async (req, res) => {
   const { error } = validateBook(req.body);
