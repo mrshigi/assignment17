@@ -7,7 +7,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(cors());
 const mongoose = require("mongoose");
-const upload = multer({ dest: __dirname + "/public/images" });
+const upload = multer({ dest: __dirname + "/images" });
 // MongoDB connection
 mongoose
   .connect(
@@ -102,7 +102,7 @@ const removeBook = async (res, id) => {
 
 const validateBook = (book) => {
   const schema = Joi.object({
-    _id: Joi.allow(""),
+    //_id: Joi.allow(""),
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
     summaries: Joi.array().items(Joi.string()).optional(),
