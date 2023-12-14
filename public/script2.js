@@ -1,6 +1,6 @@
 const getbooks = async () => {
   try {
-    return (await fetch("https://a17-dxv5.onrender.com/api/books/")).json();
+    return (await fetch("https://a17-dxv5.onrender.com/api/books")).json();
   } catch (error) {
     console.log(error);
   }
@@ -116,17 +116,28 @@ const displayDetails = (book) => {
 
   populateEditForm(book);
 };
-async function deleteBook(bookId) {
-  try {
-    const response = await fetch(`https://a17-dxv5.onrender.com//api/books/${bookId}`, { method: "DELETE" });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    const updatedBooks = await response.json();
-    showBooks(updatedBooks);
-  } catch (e) {
-    console.error("Fetch error: " + e.message);
-    displayError(e.message);
+async function deleteBook(_id) {
+    let response = await fetch(
+      `https://a17-dxv5.onrender.com/api/books/${_id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+      }
+    );
+  
+    if (response.status != 200) {
+      console.log("Error deleting");
+      return;
+    }
+  
+    let result = await response.json();
+    showbooks();
+    document.getElementById("book-details").innerHTML = "";
+    resetForm();
+    showbooks();
   }
-}
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
@@ -159,45 +170,51 @@ function displayError(errorMessage) {
 }
 const addEditbook = async (e) => {
   e.preventDefault();
+  
   const form = document.getElementById("add-edit-book-form");
   const formData = new FormData(form);
-  let response;
   formData.append("summaries", getSummaries());
 
-  //trying to add a new book
+  let response;
+  console.log(form._id.value > 0 && form._id.value.length);
   if (form._id.value == -1) {
     formData.delete("_id");
-
-    response = await fetch("/https://a17-dxv5.onrender.com/api/books", {
-      method: "POST",
-      body: formData,
-    });
-  }
-  //edit an existing book
-  else {
     console.log(...formData);
-
-    response = await fetch(`https://a17-dxv5.onrender.com/api/books/${form._id.value}`, {
-      method: "PUT",
-      body: formData,
-    });
+    response = await fetch(
+      "https://a17-dxv5.onrender.com/api/books",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  } else {
+    console.log("editting");
+    response = await fetch(
+      `https://a17-dxv5.onrender.com/api/books/${form._id.value}`,
+      {
+        method: "PUT",
+        body: formData,
+      }
+    );
   }
 
-  //successfully got data from server
   if (response.status != 200) {
-    console.log("Error posting data");
+    console.log("ERROR posting data");
+    return;
   }
 
-  book = await response.json();
+  let result = await response.json();
 
   if (form._id.value != -1) {
+    const book = await getBook(form._id.value);
     displayDetails(book);
   }
 
-  resetForm();
   document.querySelector(".dialog").classList.add("transparent");
+  resetForm();
   showbooks();
 };
+
 const getBook = async (_id) => {
     let response = await fetch(
       `https://a17-dxv5.onrender.com/api/books/${_id}`
