@@ -73,7 +73,7 @@ app.post("/api/books", upload.single("img"), async (req, res) => {
     name: req.body.name,
     description: req.body.description,
     summaries: req.body.summaries.split(","),
-    img: req.file ? req.file.filename : nuDll,
+    img: req.file ? req.file.filename : null,
   });
 
   try {
