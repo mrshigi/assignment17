@@ -99,8 +99,7 @@ const removeBook = async (res, id) => {
   const book = await Book.findByIdAndDelete(id);
   res.send(book);
 };
-
-const validateBook = (book) => {
+/*const validateBook = (book) => {
   const schema = Joi.object({
     _id: Joi.allow(""),
     name: Joi.string().min(3).required(),
@@ -110,7 +109,7 @@ const validateBook = (book) => {
   });
 
   return schema.validate(book);
-};
+};*/
 
 app.listen(3010, () => {
   console.log("666 satan mf");
