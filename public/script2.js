@@ -244,7 +244,7 @@ const handleEditFormSubmit = async (event) => {
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    await showBooks(); // Refresh the book list
+    await showbooks(); // Refresh the book list
   } catch (error) {
     console.error("Error updating book:", error);
   }
