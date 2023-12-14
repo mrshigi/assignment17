@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Book = require('./bookModel');
+const Book = require('./public/bookModel');
 
 // Replace with your MongoDB connection string
 mongoose
