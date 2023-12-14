@@ -19,7 +19,6 @@ const upload = multer({ storage: storage });
 const bookSchema = Joi.object({
   name: Joi.string().min(3).required(),
   description: Joi.string().min(3).required(),
-  rating: Joi.number().min(1).max(5).optional(),
   summaries: Joi.array().items(Joi.string()).optional(),
   img: Joi.string().optional()
 });
