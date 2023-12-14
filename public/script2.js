@@ -265,7 +265,7 @@ async function saveEditedBook(formData) {
 
 window.onload = () => {
   showbooks();
-  document.getElementById("add-edit-book-form").onsubmit = addEditBook;
+  document.getElementById("add-edit-book-form").onsubmit = addEditbook;
   document.getElementById("add-link").onclick = showHideAdd;
 
   document.querySelector(".close").onclick = () => {
