@@ -11,7 +11,7 @@ const getBooks = async () => {
 };
 const showBooks = async () => {
   try {
-    const response = await fetch("/api/books");
+    const response = await fetch("/api/books"); // Correct API call
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -164,21 +164,20 @@ const addEditBook = async (e) => {
   // Append summaries for both new and edited books
   formData.append("summaries", getSummaries().join(","));
 
-  // Client-side validation
+  // Client-side validation (mirror Joi validation)
   if (formData.get("name").trim().length < 3) {
-    displayError("Name must be at least 3 characters long.");
+    alert("Name must be at least 3 characters long.");
     return;
   }
 
   if (formData.get("description").trim().length < 3) {
-    displayError("Description must be at least 3 characters long.");
+    alert("Description must be at least 3 characters long.");
     return;
   }
 
   // Add or Edit Book
   try {
-    let url =
-      form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let url = form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
     let method = form._id.value === "-1" ? "POST" : "PUT";
 
     // If adding a new book, delete the _id field
@@ -189,13 +188,11 @@ const addEditBook = async (e) => {
     let response = await fetch(url, {
       method: method,
       body: formData,
-      headers: { Accept: "application/json" },
+      headers: { 'Accept': 'application/json' }
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      displayError(errorData.message);
-      return;
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     // Handle the response and update UI
@@ -204,7 +201,7 @@ const addEditBook = async (e) => {
     document.querySelector(".dialog").classList.add("transparent");
     showBooks();
   } catch (error) {
-    displayError("Error submitting form: " + error.message);
+    console.error("Error submitting form:", error);
   }
 };
 function displayError(errorMessage) {
