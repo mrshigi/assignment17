@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const path = require("path");
 
 // Update the path to the Book model located in the public folder
-const Book = require('./public/bookModel');
+const Book = require("./public/bookModel");
 
 app.use(express.static("public"));
 app.use(express.json());
@@ -25,12 +25,13 @@ const storage = multer.diskStorage({
     cb(null, "public/images");
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
   },
 });
 const upload = multer({ storage: storage });
-
-
 
 // GET endpoint to serve index.html
 app.get("/", (req, res) => {
@@ -126,31 +127,38 @@ app.post("/api/books", upload.single("img"), async (req, res) => {
 });
 
 // PUT endpoint to update a book
-app.put("/api/books/:id", upload.single("img"), async (req, res) => {
-  const { error } = validateBook(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+app.put("/api/books/:id", upload.single("img"), (req, res) => {
+  const bookIndex = books.findIndex((b) => b._id == req.params.id);
+  if (bookIndex === -1) {
+    res.status(404).send("Book not found");
+    return;
+  }
 
-  const book = await Book.findByIdAndUpdate(
-    req.params.id,
-    {
-      name: req.body.name,
-      description: req.body.description,
-      rating: req.body.rating,
-      summaries: req.body.summaries.split(","),
-      img: req.file ? req.file.path : req.body.img,
-    },
-    { new: true }
-  );
+  const updatedData = {
+    name: req.body.name,
+    description: req.body.description,
+    summaries: req.body.summaries.split(","),
+    img: req.file ? req.file.filename : books[bookIndex].img,
+  };
 
-  if (!book) return res.status(404).send("Book not found");
-  res.send(book);
+  const { error } = validateBook(updatedData);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  books[bookIndex] = { _id: books[bookIndex]._id, ...updatedData };
+  res.send(books[bookIndex]);
 });
+app.delete("/api/books/:id", (req, res) => {
+  const bookIndex = books.findIndex((b) => b._id == req.params.id);
+  if (bookIndex === -1) {
+    res.status(404).send("Book not found");
+    return;
+  }
 
-// DELETE endpoint to delete a book
-app.delete("/api/books/:id", async (req, res) => {
-  const book = await Book.findByIdAndRemove(req.params.id);
-  if (!book) return res.status(404).send("Book not found");
-  res.send("Book deleted");
+  books.splice(bookIndex, 1);
+  res.status(200).send("Book deleted");
 });
 const validateBook = (book) => {
   const schema = Joi.object({
@@ -158,7 +166,7 @@ const validateBook = (book) => {
     summaries: Joi.allow(""),
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
-    img: Joi.string().allow("")
+    img: Joi.string().allow(""),
   });
 
   return schema.validate(book);
