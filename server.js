@@ -29,7 +29,7 @@ const bookschema = new mongoose.Schema({
   name: String,
   description: String,
   summaries: [String],
-  img: String, // For storing image path
+  img: String,
 });
 
 const Book = mongoose.model("Book", bookschema);
@@ -38,7 +38,7 @@ const validateBook = (book) => {
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
     summaries: Joi.string().required(),
-    img: Joi.string().optional(),
+    img: Joi.string().required(),
   });
   return schema.validate(book);
 };
@@ -68,12 +68,8 @@ app.post("/api/books", upload.single("img"), (req, res) => {
     name: req.body.name,
     description: req.body.description,
     summaries: req.body.summaries.split(","),
+    img: req.file ? req.file.filename : null,
   });
-
-  if (req.file) {
-    book.img = "images/" + req.file.filename;
-  }
-
   createBook(book, res);
 });
 

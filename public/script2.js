@@ -46,7 +46,7 @@ const addDeleteButton = (book, bookElement) => {
         }
       );
       if (response.ok) {
-        bookElement.remove(); // Remove the book element from the DOM
+        bookElement.remove(); 
       }
     }
   };
@@ -144,6 +144,16 @@ function displayError(errorMessage) {
     console.error("Error message element not found");
   }
 }
+const getSummaries = () => {
+  const inputs = document.querySelectorAll("#summary-boxes input");
+  let summaries = [];
+
+  inputs.forEach((input) => {
+    summaries.push(input.value);
+  });
+
+  return summaries;
+};
 const addEditbook = async (e) => {
   e.preventDefault();
 
@@ -197,16 +207,7 @@ const getBook = async (_id) => {
 
   return await response.json();
 };
-const getSummaries = () => {
-  const inputs = document.querySelectorAll("#summary-boxes input");
-  let summaries = [];
 
-  inputs.forEach((input) => {
-    summaries.push(input.value);
-  });
-
-  return summaries;
-};
 
 const resetForm = () => {
   const form = document.getElementById("add-edit-book-form");
