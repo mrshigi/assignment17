@@ -256,7 +256,7 @@ async function saveEditedBook(formData) {
     });
     if (response.status === 200) {
       // Update view
-      showBooks();
+      showbooks();
     } else {
       // Handle error
       console.error("Error updating book");
@@ -264,7 +264,7 @@ async function saveEditedBook(formData) {
   }
 
 window.onload = () => {
-  showBooks();
+  showbooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditBook;
   document.getElementById("add-link").onclick = showHideAdd;
 
