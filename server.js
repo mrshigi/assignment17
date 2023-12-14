@@ -1,28 +1,52 @@
 const express = require("express");
-const multer = require("multer");
+const app = express();
 const Joi = require("joi");
+const multer = require("multer");
+const mongoDB = require("mongodb");
+const mongoose = require("mongoose");
+const path = require("path");
+
+// Update the path to the Book model located in the public folder
 const Book = require("./bookModel");
 
-const app = express();
+app.use(express.static("public"));
+app.use(express.json());
+const cors = require("cors");
+app.use(cors());
 
+// MongoDB connection
+mongoose
+  .connect(
+    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
+  )
+  .then(() => console.log("Connected to MongoDB..."))
+  .catch((err) => console.error("Could not connect to MongoDB...", err));
+
+// Multer configuration for image upload
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, '/uploads');
+  destination: function (req, file, cb) {
+    cb(null, "public/images");
   },
-  filename: function(req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now());
-  }
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
 });
-
 const upload = multer({ storage: storage });
 
-const bookSchema = Joi.object({
-  name: Joi.string().min(3).required(),
-  description: Joi.string().min(3).required(),
-  summaries: Joi.array().items(Joi.string()).optional(),
-  img: Joi.string().optional()
-});
+// Joi schema for validation
+const validateBook = (book) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+    description: Joi.string().min(3).required(),
+    summaries: Joi.array().items(Joi.string()).optional(),
+    img: Joi.string().optional(),
+  });
 
+  return schema.validate(book);
+};
 
 // GET endpoint to serve index.html
 app.get("/", (req, res) => {
