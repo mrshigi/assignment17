@@ -104,17 +104,6 @@ const removeBook = async (res, id) => {
   const book = await Book.findByIdAndDelete(id);
   res.send(book);
 };
-async function seedBooks() {
-  for (const bookData of books) {
-    const book = new Book(bookData);
-    await book.save();
-  }
-
-  console.log("Books have been seeded!");
-  db.close();
-}
-
-seedBooks();
 
 const validateBook = (book) => {
   const schema = Joi.object({
