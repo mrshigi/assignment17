@@ -1,6 +1,6 @@
 const getbooks = async () => {
   try {
-    return (await fetch("api/books/")).json();
+    return (await fetch("https://a17-dxv5.onrender.com/api/books/")).json();
   } catch (error) {
     console.log(error);
   }
@@ -24,7 +24,7 @@ const showbooks = async () => {
     a.append(h3);
 
     const img = document.createElement("img");
-    img.src = book.img;
+    img.src = "https://a17-dxv5.onrender.com/"+book.img
     section.append(img);
 
     a.onclick = (e) => {
@@ -118,7 +118,7 @@ const displayDetails = (book) => {
 };
 async function deleteBook(bookId) {
   try {
-    const response = await fetch(`/api/books/${bookId}`, { method: "DELETE" });
+    const response = await fetch(`https://a17-dxv5.onrender.com//api/books/${bookId}`, { method: "DELETE" });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const updatedBooks = await response.json();
     showBooks(updatedBooks);
@@ -168,7 +168,7 @@ const addEditbook = async (e) => {
   if (form._id.value == -1) {
     formData.delete("_id");
 
-    response = await fetch("/api/books", {
+    response = await fetch("/https://a17-dxv5.onrender.com/api/books", {
       method: "POST",
       body: formData,
     });
@@ -177,7 +177,7 @@ const addEditbook = async (e) => {
   else {
     console.log(...formData);
 
-    response = await fetch(`/api/books/${form._id.value}`, {
+    response = await fetch(`https://a17-dxv5.onrender.com/api/books/${form._id.value}`, {
       method: "PUT",
       body: formData,
     });
@@ -198,7 +198,17 @@ const addEditbook = async (e) => {
   document.querySelector(".dialog").classList.add("transparent");
   showbooks();
 };
-
+const getBook = async (_id) => {
+    let response = await fetch(
+      `https://a17-dxv5.onrender.com/api/books/${_id}`
+    );
+    if (response.status != 200) {
+      console.log("Error reciving recipe");
+      return;
+    }
+  
+    return await response.json();
+  };
 const getSummaries = () => {
   const inputs = document.querySelectorAll("#summary-boxes input");
   let summaries = [];
@@ -237,7 +247,7 @@ const handleEditFormSubmit = async (event) => {
   formData.append("summaries", getSummaries().join(","));
 
   try {
-    const response = await fetch("/api/books/" + formData.get("_id"), {
+    const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
       method: "PUT",
       body: formData,
     });
@@ -250,7 +260,7 @@ const handleEditFormSubmit = async (event) => {
   }
 };
 async function saveEditedBook(formData) {
-    const response = await fetch("/api/books/" + formData.get("_id"), {
+    const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
       method: "PUT",
       body: formData,
     });
