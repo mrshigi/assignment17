@@ -23,7 +23,7 @@ const showbooks = async () => {
     h3.innerHTML = book.name;
     a.append(h3);
 
-    if (recipe.img) {
+    if (book.img) {
     const img = document.createElement("img");
     img.src = "https://a17-dxv5.onrender.com/" + book.img;
     section.append(img);}
@@ -74,7 +74,7 @@ const displayDetails = (book) => {
 
   dLink.onclick = (e) => {
     e.preventDefault();
-    deleteRecipe(book._id);
+    deleteBook(book._id);
   };
 
   populateEditForm(book);
@@ -188,7 +188,7 @@ const addEditbook = async (e) => {
 const getBook = async (_id) => {
   let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`);
   if (response.status != 200) {
-    console.log("Error reciving recipe");
+    console.log("Error reciving Book");
     return;
   }
 
