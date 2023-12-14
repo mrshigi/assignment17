@@ -35,19 +35,19 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-
-
-const Book = mongoose.model("Book", bookschema);
-
-app.get("/api/books", (req, res) => {
-  getbooks(res);
-});
 const bookschema= new mongoose.Schema({
     name: String,
     description: String,
     summaries: [String],
     img: String, // For storing image path
   });
+
+const Book = mongoose.model("Book", bookschema);
+
+app.get("/api/books", (req, res) => {
+  getbooks(res);
+});
+
 
 const getbooks = async (res) => {
   const books = await Book.find();
