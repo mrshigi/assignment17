@@ -63,7 +63,7 @@ app.post("/api/books", upload.single("img"), (req, res) => {
   });
 
 if (req.file) {
-  book.img = "/uploads" + req.file.filename;
+  book.img = "uploads/" + req.file.filename;
 }
   createBook(book, res);
 });
