@@ -121,10 +121,6 @@ app.delete("/api/books/:id", async (req, res) => {
   }
 });
 
-const removeBook = async (res, id) => {
-    const book = await Book.findByIdAndDelete(id);
-    res.send(book);
-  };
 
 // Start the server
 const port = process.env.PORT || 3000;
