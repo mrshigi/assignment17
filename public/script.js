@@ -18,7 +18,7 @@ const showBooks = async () => {
 
     const books = await response.json();
 
-    const booksContainer = document.getElementById("books-list");
+    const booksContainer = document.getElementById("books-container");
     if (booksContainer) {
       booksContainer.innerHTML = "";
     } else {
