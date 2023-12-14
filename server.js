@@ -177,6 +177,7 @@ seedBooks();
 
 const validateBook = (book) => {
   const schema = Joi.object({
+    _id: Joi.allow(""),
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
     summaries: Joi.array().items(Joi.string()).optional(),
