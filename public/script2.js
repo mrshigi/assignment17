@@ -210,11 +210,17 @@ function displayError(errorMessage) {
   } else {
     console.error("Error message element not found");
   }
-};
+}
 
 
 
-/*const handleEditFormSubmit = async (event) => {
+
+
+;
+
+
+
+const handleEditFormSubmit = async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
   formData.append("summaries", getSummaries().join(","));
@@ -251,7 +257,7 @@ async function saveEditedBook(formData) {
     console.error("Error updating book");
   }
 }
-*/
+
 window.onload = () => {
   showbooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditbook;
