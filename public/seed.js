@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Book = require('./bookModel');
 
 // Replace with your MongoDB connection string
-const mongoDB = 'mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/';
+const mongoDB = 'mongodb+srv://sraudat:seaner@cluster0.oh5cmuh.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
