@@ -5,6 +5,9 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 const path = require("path");
 
+// Update the path to the Book model located in the public folder
+const Book = require('./public/bookModel');
+
 app.use(express.static("public"));
 app.use(express.json());
 const cors = require("cors");
@@ -26,17 +29,6 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-
-// Mongoose schema and model for books
-const bookSchema = new mongoose.Schema({
-  name: String,
-  description: String,
-  rating: Number,
-  summaries: [String],
-  img: String, // For storing image path
-});
-
-const Book = mongoose.model("Book", bookSchema);
 
 // Joi schema for validation
 const validateBook = (book) => {
@@ -108,5 +100,5 @@ app.delete("/api/books/:id", async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server started on port 3000");
+  console.log("666 satan mf");
 });
