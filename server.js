@@ -29,7 +29,7 @@ const bookschema = new mongoose.Schema({
 
 const Book = mongoose.model("Book", bookschema);
 
-app.get("/api/books", (req, res) => {
+app.get("https://a17-dxv5.onrender.com/api/books", (req, res) => {
   getBooks(res);
 });
 
@@ -38,7 +38,7 @@ const getBooks = async (res) => {
   res.send(books);
 };
 
-app.post("/api/books", upload.single("img"), (req, res) => {
+app.post("https://a17-dxv5.onrender.com/api/books", upload.single("img"), (req, res) => {
   const result = validateBook(req.body);
 
   if (result.error) {
@@ -64,7 +64,7 @@ const createBook = async (book, res) => {
   res.send(book);
 };
 
-app.put("/api/books/:id", upload.single("img"), (req, res) => {
+app.put("https://a17-dxv5.onrender.com/api/books/:id", upload.single("img"), (req, res) => {
   const result = validateBook(req.body);
 
   if (result.error) {
@@ -91,7 +91,7 @@ const updateBook = async (req, res) => {
   res.send(Book);
 };
 
-app.delete("/api/books/:id", upload.single("img"), (req, res) => {
+app.delete("https://a17-dxv5.onrender.com/api/books/:id", upload.single("img"), (req, res) => {
   removeBook(res, req.params.id);
 });
 
