@@ -9,22 +9,14 @@ app.use(cors());
 const mongoose = require("mongoose");
 // MongoDB connection
 mongoose
-.connect("mongodb+srv://sraudat:seaner@data.yrbfwa1.mongodb.net/books?retryWrites=true&w=majority")
+  .connect(
+    "mongodb+srv://sraudat:seaner@data.yrbfwa1.mongodb.net/books?retryWrites=true&w=majority"
+  )
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
 // Multer configuration for image upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads/images");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
-});
-const upload = multer({ storage: storage });
+const upload = multer({ dest: __dirname + "/public/uploads" });
+
 const bookschema = new mongoose.Schema({
   name: String,
   description: String,
@@ -113,7 +105,6 @@ const removeBook = async (res, id) => {
   const book = await Book.findByIdAndDelete(id);
   res.send(book);
 };
-
 
 app.listen(3010, () => {
   console.log("666 satan mf");
