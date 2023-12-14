@@ -30,18 +30,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Joi schema for validation
-const validateBook = (book) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-    description: Joi.string().min(3).required(),
-    rating: Joi.number().min(1).max(5).optional(),
-    summaries: Joi.array().items(Joi.string()).optional(),
-    img: Joi.string().optional(),
-  });
 
-  return schema.validate(book);
-};
 
 // GET endpoint to serve index.html
 app.get("/", (req, res) => {
@@ -163,6 +152,17 @@ app.delete("/api/books/:id", async (req, res) => {
   if (!book) return res.status(404).send("Book not found");
   res.send("Book deleted");
 });
+const validateBook = (book) => {
+  const schema = Joi.object({
+    _id: Joi.allow(""),
+    summaries: Joi.allow(""),
+    name: Joi.string().min(3).required(),
+    description: Joi.string().min(3).required(),
+    img: Joi.string().allow("")
+  });
+
+  return schema.validate(book);
+};
 
 app.listen(3000, () => {
   console.log("666 satan mf");
