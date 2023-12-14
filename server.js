@@ -1,53 +1,29 @@
 const express = require("express");
-const app = express();
-const Joi = require("joi");
 const multer = require("multer");
-const mongoDB = require("mongodb");
-const mongoose = require("mongoose");
-const path = require("path");
-
-// Update the path to the Book model located in the public folder
+const Joi = require("joi");
 const Book = require("./bookModel");
 
-app.use(express.static("public"));
-app.use(express.json());
-const cors = require("cors");
-app.use(cors());
+const app = express();
 
-// MongoDB connection
-mongoose
-  .connect(
-    "mongodb+srv://sraudat:seaner@data.fx1dsw5.mongodb.net/?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("Connected to MongoDB..."))
-  .catch((err) => console.error("Could not connect to MongoDB...", err));
-
-// Multer configuration for image upload
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/images");
+  destination: function(req, file, cb) {
+    cb(null, './public/images');
   },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
+  filename: function(req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now());
+  }
 });
+
 const upload = multer({ storage: storage });
 
-// Joi schema for validation
-const validateBook = (book) => {
-  const schema = Joi.object({
-    name: Joi.string().min(3).required(),
-    description: Joi.string().min(3).required(),
-    rating: Joi.number().min(1).max(5).optional(),
-    summaries: Joi.array().items(Joi.string()).optional(),
-    img: Joi.string().optional(),
-  });
+const bookSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  description: Joi.string().min(3).required(),
+  rating: Joi.number().min(1).max(5).optional(),
+  summaries: Joi.array().items(Joi.string()).optional(),
+  img: Joi.string().optional()
+});
 
-  return schema.validate(book);
-};
 
 // GET endpoint to serve index.html
 app.get("/", (req, res) => {

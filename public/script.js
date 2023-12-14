@@ -264,6 +264,29 @@ const addBook = (e) => {
   input.type = "text";
   section.append(input);
 };
+function validateBookForm() {
+  const name = document.getElementById("name").value;
+  const description = document.getElementById("description").value;
+  const image = document.getElementById("image").files[0];
+
+  if (!name || name.length < 3) {
+    alert("Name is required and should be at least 3 characters.");
+    return false;
+  }
+
+  if (!description || description.length < 3) {
+    alert("Description is required and should be at least 3 characters.");
+    return false;
+  }
+
+  if (!image) {
+    alert("Please upload an image.");
+    return false;
+  }
+
+  // Additional validations as needed
+  return true;
+}
 
 window.onload = () => {
   showBooks();
