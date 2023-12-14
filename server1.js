@@ -24,29 +24,30 @@ app.get("/", (req, res) => {
 });
 // Multer configuration for image upload
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "public/images");
-    },
-    filename: function (req, file, cb) {
-      cb(
-        null,
-        file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-      );
-    },
-  });
-  const upload = multer({ storage: storage });
-  const bookSchema = new mongoose.Schema({
-    name: String,
-    description: String,
-    summaries: [String],
-    img: String, // For storing image path
-  });
+  destination: function (req, file, cb) {
+    cb(null, "public/images");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: storage });
+
 
 const Book = mongoose.model("Book", bookschema);
 
 app.get("/api/books", (req, res) => {
   getbooks(res);
 });
+const bookschema= new mongoose.Schema({
+    name: String,
+    description: String,
+    summaries: [String],
+    img: String, // For storing image path
+  });
 
 const getbooks = async (res) => {
   const books = await Book.find();
