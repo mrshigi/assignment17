@@ -24,7 +24,7 @@ const showbooks = async () => {
     a.append(h3);
 
     const img = document.createElement("img");
-    img.src = "https://a17-dxv5.onrender.com/"+book.img
+    img.src = "https://a17-dxv5.onrender.com/" + book.img;
     section.append(img);
 
     a.onclick = (e) => {
@@ -39,9 +39,12 @@ const addDeleteButton = (book, bookElement) => {
   deleteBtn.onclick = async () => {
     if (confirm("Are you sure you want to delete this book?")) {
       // Send DELETE request
-      const response = await fetch(`/api/books/${book._id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `https://a17-dxv5.onrender.com/api/books/${book._id}`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
         bookElement.remove(); // Remove the book element from the DOM
       }
@@ -49,30 +52,6 @@ const addDeleteButton = (book, bookElement) => {
   };
   bookElement.appendChild(deleteBtn);
 };
-function validateBookForm() {
-  const name = document.getElementById("name").value;
-  const description = document.getElementById("description").value;
-  const image = document.getElementById("img").files[0];
-
-  if (!name || name.length < 3) {
-    displayError("Name is required and should be at least 3 characters.");
-    return false;
-  }
-
-  if (!description || description.length < 3) {
-    displayError(
-      "Description is required and should be at least 3 characters."
-    );
-    return false;
-  }
-
-  if (!img) {
-    displayError("Please upload an image.");
-    return false;
-  }
-
-  return true;
-}
 const displayDetails = (book) => {
   const bookDetails = document.getElementById("book-details");
   bookDetails.innerHTML = "";
@@ -117,27 +96,24 @@ const displayDetails = (book) => {
   populateEditForm(book);
 };
 async function deleteBook(_id) {
-    let response = await fetch(
-      `https://a17-dxv5.onrender.com/api/books/${_id}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8",
-        },
-      }
-    );
-  
-    if (response.status != 200) {
-      console.log("Error deleting");
-      return;
-    }
-  
-    let result = await response.json();
-    showbooks();
-    document.getElementById("book-details").innerHTML = "";
-    resetForm();
-    showbooks();
+  let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
+  });
+
+  if (response.status != 200) {
+    console.log("Error deleting");
+    return;
   }
+
+  let result = await response.json();
+  showbooks();
+  document.getElementById("book-details").innerHTML = "";
+  resetForm();
+  showbooks();
+}
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
@@ -170,7 +146,7 @@ function displayError(errorMessage) {
 }
 const addEditbook = async (e) => {
   e.preventDefault();
-  
+
   const form = document.getElementById("add-edit-book-form");
   const formData = new FormData(form);
   formData.append("summaries", getSummaries());
@@ -180,13 +156,10 @@ const addEditbook = async (e) => {
   if (form._id.value == -1) {
     formData.delete("_id");
     console.log(...formData);
-    response = await fetch(
-      "https://a17-dxv5.onrender.com/api/books",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    response = await fetch("https://a17-dxv5.onrender.com/api/books", {
+      method: "POST",
+      body: formData,
+    });
   } else {
     console.log("editting");
     response = await fetch(
@@ -216,16 +189,14 @@ const addEditbook = async (e) => {
 };
 
 const getBook = async (_id) => {
-    let response = await fetch(
-      `https://a17-dxv5.onrender.com/api/books/${_id}`
-    );
-    if (response.status != 200) {
-      console.log("Error reciving recipe");
-      return;
-    }
-  
-    return await response.json();
-  };
+  let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`);
+  if (response.status != 200) {
+    console.log("Error reciving recipe");
+    return;
+  }
+
+  return await response.json();
+};
 const getSummaries = () => {
   const inputs = document.querySelectorAll("#summary-boxes input");
   let summaries = [];
@@ -264,10 +235,13 @@ const handleEditFormSubmit = async (event) => {
   formData.append("summaries", getSummaries().join(","));
 
   try {
-    const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
-      method: "PUT",
-      body: formData,
-    });
+    const response = await fetch(
+      "https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"),
+      {
+        method: "PUT",
+        body: formData,
+      }
+    );
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -277,18 +251,21 @@ const handleEditFormSubmit = async (event) => {
   }
 };
 async function saveEditedBook(formData) {
-    const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
+  const response = await fetch(
+    "https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"),
+    {
       method: "PUT",
       body: formData,
-    });
-    if (response.status === 200) {
-      // Update view
-      showbooks();
-    } else {
-      // Handle error
-      console.error("Error updating book");
     }
+  );
+  if (response.status === 200) {
+    // Update view
+    showbooks();
+  } else {
+    // Handle error
+    console.error("Error updating book");
   }
+}
 
 window.onload = () => {
   showbooks();
