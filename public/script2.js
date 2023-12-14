@@ -23,9 +23,10 @@ const showbooks = async () => {
     h3.innerHTML = book.name;
     a.append(h3);
 
+    if (recipe.img) {
     const img = document.createElement("img");
-    img.src = "/" + book.img;
-    section.append(img);
+    img.src = "https://a17-dxv5.onrender.com/" + book.img;
+    section.append(img);}
 
     a.onclick = (e) => {
       e.preventDefault();
@@ -73,6 +74,7 @@ const displayDetails = (book) => {
 
   dLink.onclick = (e) => {
     e.preventDefault();
+    deleteRecipe(book._id);
   };
 
   populateEditForm(book);
@@ -96,6 +98,7 @@ async function deleteBook(_id) {
   resetForm();
   showbooks();
 }
+
 
 const populateEditForm = (book) => {
   const form = document.getElementById("add-edit-book-form");
@@ -136,6 +139,13 @@ const getSummaries = () => {
 
   return summaries;
 };
+const addBook = (e) => {
+  e.preventDefault();
+  const section = document.getElementById("summary-boxes");
+  const input = document.createElement("input");
+  input.type = "text";
+  section.append(input);
+};
 const addEditbook = async (e) => {
   e.preventDefault();
 
@@ -166,6 +176,7 @@ const addEditbook = async (e) => {
     return;
   }
   let result = await response.json();
+
   if (form._id.value != -1) {
     const book = await getBook(form._id.value);
     displayDetails(book);
@@ -175,7 +186,7 @@ const addEditbook = async (e) => {
   showbooks();
 };
 const getBook = async (_id) => {
-  let response = await fetch(`/api/books/${_id}`);
+  let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`);
   if (response.status != 200) {
     console.log("Error reciving recipe");
     return;
@@ -198,13 +209,7 @@ const showHideAdd = (e) => {
   resetForm();
 };
 
-const addBook = (e) => {
-  e.preventDefault();
-  const section = document.getElementById("summary-boxes");
-  const input = document.createElement("input");
-  input.type = "text";
-  section.append(input);
-};
+
 const handleEditFormSubmit = async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
@@ -255,7 +260,7 @@ const addDeleteButton = (book, bookElement) => {
       );
       if (response.ok) {
         bookElement.remove(); // Remove the book element from the DOM
-        bookElement.remove();
+        bookElement.remove(); 
       }
     }
   };

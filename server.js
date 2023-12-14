@@ -30,7 +30,7 @@ const validateBook = (book) => {
     name: Joi.string().min(3).required(),
     description: Joi.string().min(3).required(),
     summaries: Joi.string().required(),
-    img: Joi.string().required(),
+    img: Joi.string().optional(),
   });
   return schema.validate(book);
 };
@@ -60,8 +60,11 @@ app.post("/api/books", upload.single("img"), (req, res) => {
     name: req.body.name,
     description: req.body.description,
     summaries: req.body.summaries.split(","),
-    img: req.file ? req.file.filename : null,
   });
+
+if (req.file) {
+  book.img = "/uploads" + req.file.filename;
+}
   createBook(book, res);
 });
 
@@ -89,7 +92,7 @@ const updateBook = async (req, res) => {
   };
 
   if (req.file) {
-    fieldsToUpdate.img = "images/" + req.file.filename;
+    fieldsToUpdate.img = "uploads/" + req.file.filename;
   }
 
   const result = await Book.updateOne({ _id: req.params.id }, fieldsToUpdate);
