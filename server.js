@@ -110,22 +110,29 @@ app.get("/api/books", async (req, res) => {
 });
 
 // POST endpoint to add a new book
-app.post("/api/books", upload.single("img"), async (req, res) => {
-  const { error } = validateBook(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-
-  const book = new Book({
+app.post("/api/books", upload.single("img"), (req, res) => {
+  const bookData = {
     name: req.body.name,
     description: req.body.description,
-    rating: req.body.rating,
     summaries: req.body.summaries.split(","),
-    img: req.file ? req.file.path : "",
-  });
+    img: req.file ? req.file.filename : ""
+  };
 
-  await book.save();
-  res.send(book);
+  const { error } = validateBook(bookData);
+
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  const book = {
+    _id: books.length + 1,
+    ...bookData
+  };
+
+  books.push(book);
+  res.send(books);
 });
-
 // PUT endpoint to update a book
 app.put("/api/books/:id", upload.single("img"), (req, res) => {
   const bookIndex = books.findIndex((b) => b._id == req.params.id);
