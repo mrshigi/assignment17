@@ -14,7 +14,7 @@ app.use(cors());
 // MongoDB connection
 mongoose
   .connect(
-    "mongodb+srv://sraudat:seaner@data.hkvq2dq.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://sraudat:seaner@data.hkvq2dq.mongodb.net/"
   )
   .then(() => console.log("Connected to MongoDB..."))
   .catch((err) => console.error("Could not connect to MongoDB...", err));
@@ -22,32 +22,20 @@ mongoose
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
-// Multer configuration for image upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/images");
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
-  },
+const upload = multer({ dest: __dirname + "/public/images" });
+
+const bookschema = new mongoose.Schema({
+  name: String,
+  description: String,
+  summaries: [String],
+  img: String, // For storing image path
 });
-const upload = multer({ storage: storage });
-const bookschema= new mongoose.Schema({
-    name: String,
-    description: String,
-    summaries: [String],
-    img: String, // For storing image path
-  });
 
 const Book = mongoose.model("Book", bookschema);
 
 app.get("/api/books", (req, res) => {
   getBooks(res);
 });
-
 
 const getBooks = async (res) => {
   const books = await Book.find();
