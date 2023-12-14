@@ -61,7 +61,7 @@ async function addEditBook(e) {
 
   if (!validateBookForm()) return;
 
-  const formData = new FormData(document.getElementById("bookForm"));
+  const formData = new FormData(document.getElementById("add-edit-book-form"));
   const method = formData.get("_id") ? "PUT" : "POST";
   const endpoint = formData.get("_id")
     ? `/api/books/${formData.get("_id")}`
