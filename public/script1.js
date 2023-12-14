@@ -86,7 +86,7 @@ async function addEditBook(e) {
 function validateBookForm() {
   const name = document.getElementById("name").value;
   const description = document.getElementById("description").value;
-  const image = document.getElementById("image").files[0];
+  const image = document.getElementById("img").files[0];
 
   if (!name || name.length < 3) {
     displayError("Name is required and should be at least 3 characters.");
@@ -100,7 +100,7 @@ function validateBookForm() {
     return false;
   }
 
-  if (!image) {
+  if (!img) {
     displayError("Please upload an image.");
     return false;
   }
@@ -255,6 +255,19 @@ const addBook = (e) => {
   input.type = "text";
   section.append(input);
 };
+async function saveEditedBook(formData) {
+    const response = await fetch("/api/books/" + formData.get("_id"), {
+      method: "PUT",
+      body: formData,
+    });
+    if (response.status === 200) {
+      // Update view
+      showBooks();
+    } else {
+      // Handle error
+      console.error("Error updating book");
+    }
+  }
 
 // Setup event listeners on window load
 window.onload = () => {
