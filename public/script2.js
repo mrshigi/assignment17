@@ -24,7 +24,7 @@ const showbooks = async () => {
     a.append(h3);
 
     const img = document.createElement("img");
-    img.src = "https://a17-dxv5.onrender.com/" + book.img;
+    img.src = "https://a17-dxv5.onrender.com" + book.img;
     section.append(img);
 
     a.onclick = (e) => {
@@ -40,7 +40,7 @@ const addDeleteButton = (book, bookElement) => {
     if (confirm("Are you sure you want to delete this book?")) {
       // Send DELETE request
       const response = await fetch(
-        `https://a17-dxv5.onrender.com/api/books/${book._id}`,
+        `/api/books/${book._id}`,
         {
           method: "DELETE",
         }
@@ -189,7 +189,7 @@ const addEditbook = async (e) => {
 };
 
 const getBook = async (_id) => {
-  let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`);
+  let response = await fetch(`/api/books/${_id}`);
   if (response.status != 200) {
     console.log("Error reciving recipe");
     return;
