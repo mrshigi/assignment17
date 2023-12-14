@@ -73,7 +73,7 @@ const addEditBook = async (e) => {
 
   // Add or Edit Book
   try {
-    let url = form._id.value === "-1" ? "/api/books" : `/api/books/${form._id.value}`;
+    let url = form._id.value === "-1" ? "https://a17-dxv5.onrender.com/api/books" : `https://a17-dxv5.onrender.com/api/books/${form._id.value}`;
     let method = form._id.value === "-1" ? "POST" : "PUT";
 
     // If adding a new book, delete the _id field
@@ -144,7 +144,7 @@ const displayDetails = (book) => {
   populateEditForm(book);
 };
 async function saveEditedBook(formData) {
-  const response = await fetch("/api/books/" + formData.get("_id"), {
+  const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
     method: "PUT",
     body: formData,
   });
@@ -159,7 +159,7 @@ async function saveEditedBook(formData) {
 
 async function deleteBook(bookId) {
   if (confirm("Are you sure you want to delete this book?")) {
-    const response = await fetch("/api/books/" + bookId, {
+    const response = await fetch("https://a17-dxv5.onrender.com/api/books/" + bookId, {
       method: "DELETE",
     });
     if (response.status === 200) {
@@ -192,7 +192,7 @@ const handleEditFormSubmit = async (event) => {
   formData.append("summaries", getSummaries().join(","));
 
   try {
-    const response = await fetch("/api/books/" + formData.get("_id"), {
+    const response = await fetch("/https://a17-dxv5.onrender.com/api/books/" + formData.get("_id"), {
       method: "PUT",
       body: formData,
     });
@@ -222,7 +222,7 @@ const addDeleteButton = (book, bookElement) => {
   deleteBtn.onclick = async () => {
     if (confirm("Are you sure you want to delete this book?")) {
       // Send DELETE request
-      const response = await fetch(`/api/books/${book._id}`, {
+      const response = await fetch(`https://a17-dxv5.onrender.com/api/books/${book._id}`, {
         method: "DELETE",
       });
       if (response.ok) {
@@ -283,8 +283,6 @@ function validateBookForm() {
     alert("Please upload an image.");
     return false;
   }
-
-  // Additional validations as needed
   return true;
 }
 
