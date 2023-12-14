@@ -2,52 +2,23 @@ const express = require("express");
 const app = express();
 const Joi = require("joi");
 const multer = require("multer");
-const mongoDB = require("mongodb");
-const mongoose = require("mongoose");
-const path = require("path");
-
 app.use(express.static("public"));
 app.use(express.json());
 const cors = require("cors");
 app.use(cors());
-
+const mongoose = require("mongoose");
+const upload = multer({ dest: __dirname + "/public/images" });
 // MongoDB connection
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://sraudat:seaner@data.hkvq2dq.mongodb.net/?retryWrites=true&w=majority";
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
-run().catch(console.dir);
-/*mongoose
+mongoose
   .connect(
     "mongodb+srv://sraudat:seaner@data.hkvq2dq.mongodb.net/?retryWrites=true&w=majority"
   )
   .then(() => console.log("Connected to MongoDB..."))
-  .catch((err) => console.error("Could not connect to MongoDB...", err));*/
+  .catch((err) => console.error("Could not connect to MongoDB...", err));
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
-const upload = multer({ dest: __dirname + "/public/images" });
-
 
 const bookschema = new mongoose.Schema({
   name: String,
