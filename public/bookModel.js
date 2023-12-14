@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const bookSchema = new mongoose.Schema({
     name: String,
     description: String,
-    rating: Number,
     summaries: [String],
     img: String, // For storing image path
 });
