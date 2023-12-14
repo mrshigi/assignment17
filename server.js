@@ -50,8 +50,12 @@ app.get("/", (req, res) => {
 
 // GET endpoint to retrieve all books
 app.get("/api/books", async (req, res) => {
-  const books = await Book.find();
-  res.send(books);
+  try {
+    const books = await Book.find(); // Fetch all books from the database
+    res.send(books);
+  } catch (err) {
+    res.status(500).send("Error fetching books from database"); // Send a 500 error on failure
+  }
 });
 
 // POST endpoint to add a new book
