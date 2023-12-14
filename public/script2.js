@@ -33,25 +33,6 @@ const showbooks = async () => {
     };
   });
 };
-const addDeleteButton = (book, bookElement) => {
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.onclick = async () => {
-    if (confirm("Are you sure you want to delete this book?")) {
-      // Send DELETE request
-      const response = await fetch(
-        `/api/books/${book._id}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (response.ok) {
-        bookElement.remove(); 
-      }
-    }
-  };
-  bookElement.appendChild(deleteBtn);
-};
 const displayDetails = (book) => {
   const bookDetails = document.getElementById("book-details");
   bookDetails.innerHTML = "";
@@ -120,39 +101,24 @@ const populateEditForm = (book) => {
   form._id.value = book._id;
   form.name.value = book.name;
   form.description.value = book.description;
-  populateSummaries(book);
-};
 
-const populateSumamries = (book) => {
-  const section = document.getElementById("summary-boxes");
+  const summariesP = document.getElementById("summary-boxes");
+  summariesP.innerHTML = "";
+  console.log(book.summaries);
 
-  book.summaries.forEach((summaries) => {
+  for (let i in book.summaries) {
     const input = document.createElement("input");
     input.type = "text";
-    input.value = summaries;
-    section.append(input);
-  });
-};
-// Helper function to display errors on the page
-
-function displayError(errorMessage) {
-  const errorElement = document.getElementById("error-message");
-  if (errorElement) {
-    errorElement.textContent = errorMessage;
-    errorElement.style.display = "block";
-  } else {
-    console.error("Error message element not found");
+    input.value = recipe.ingredients[i];
+    summariesP.append(input);
   }
-}
-const getSummaries = () => {
-  const inputs = document.querySelectorAll("#summary-boxes input");
-  let summaries = [];
-
-  inputs.forEach((input) => {
-    summaries.push(input.value);
-  });
-
-  return summaries;
+};
+const addBook = (e) => {
+  e.preventDefault();
+  const section = document.getElementById("summary-boxes");
+  const input = document.createElement("input");
+  input.type = "text";
+  section.append(input);
 };
 const addEditbook = async (e) => {
   e.preventDefault();
@@ -199,7 +165,7 @@ const addEditbook = async (e) => {
 };
 
 const getBook = async (_id) => {
-  let response = await fetch(`/api/books/${_id}`);
+  let response = await fetch(`https://a17-dxv5.onrender.com/api/books/${_id}`);
   if (response.status != 200) {
     console.log("Error reciving recipe");
     return;
@@ -209,13 +175,23 @@ const getBook = async (_id) => {
 };
 
 
+const getSummaries = () => {
+  const inputs = document.querySelectorAll("#summary-boxes input");
+  let summaries = [];
+
+  inputs.forEach((input) => {
+    summaries.push(input.value);
+  });
+
+  return summaries;
+};
+
 const resetForm = () => {
   const form = document.getElementById("add-edit-book-form");
   form.reset();
   form._id = "-1";
   document.getElementById("summary-boxes").innerHTML = "";
-};
-
+}
 const showHideAdd = (e) => {
   e.preventDefault();
   document.querySelector(".dialog").classList.remove("transparent");
@@ -223,14 +199,22 @@ const showHideAdd = (e) => {
   resetForm();
 };
 
-const addBook = (e) => {
-  e.preventDefault();
-  const section = document.getElementById("summary-boxes");
-  const input = document.createElement("input");
-  input.type = "text";
-  section.append(input);
+
+
+
+function displayError(errorMessage) {
+  const errorElement = document.getElementById("error-message");
+  if (errorElement) {
+    errorElement.textContent = errorMessage;
+    errorElement.style.display = "block";
+  } else {
+    console.error("Error message element not found");
+  }
 };
-const handleEditFormSubmit = async (event) => {
+
+
+
+/*const handleEditFormSubmit = async (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
   formData.append("summaries", getSummaries().join(","));
@@ -267,7 +251,7 @@ async function saveEditedBook(formData) {
     console.error("Error updating book");
   }
 }
-
+*/
 window.onload = () => {
   showbooks();
   document.getElementById("add-edit-book-form").onsubmit = addEditbook;
